@@ -4,7 +4,8 @@ import { Link } from 'react-router-dom';
 import { SERVICES, PROPERTIES } from '../constants'; 
 import PropertyCard from '../components/PropertyCard';
 import { db, isFirebaseConfigured } from '../firebase';
-import firebase from 'firebase/app';
+// Use compat/app to access the augmented firebase namespace with firestore types
+import firebase from 'firebase/compat/app';
 
 const Home: React.FC = () => {
   const [featuredProjects, setFeaturedProjects] = useState<any[]>([]);

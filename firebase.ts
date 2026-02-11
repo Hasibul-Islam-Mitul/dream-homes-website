@@ -1,8 +1,9 @@
 
-import firebase from "firebase/app";
-import "firebase/auth";
-import "firebase/firestore";
-import "firebase/storage";
+// Use compat imports to ensure the default export 'firebase' includes modular extensions like firestore and auth.
+import firebase from "firebase/compat/app";
+import "firebase/compat/auth";
+import "firebase/compat/firestore";
+import "firebase/compat/storage";
 
 /**
  * IMPORTANT: REPLACE THE PLACEHOLDERS BELOW WITH YOUR ACTUAL FIREBASE CONFIGURATION

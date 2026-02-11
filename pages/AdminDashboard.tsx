@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { db, storage, auth } from '../firebase';
-import firebase from 'firebase/app';
+import firebase from 'firebase/compat/app';
 import { useNavigate } from 'react-router-dom';
 
 const AdminDashboard = () => {
