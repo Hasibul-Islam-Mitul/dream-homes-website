@@ -4,7 +4,6 @@ import { Link } from 'react-router-dom';
 import { SERVICES, PROPERTIES } from '../constants'; 
 import PropertyCard from '../components/PropertyCard';
 import { db, isFirebaseConfigured } from '../firebase';
-// Use compat/app to access the augmented firebase namespace with firestore types
 import firebase from 'firebase/compat/app';
 
 const Home: React.FC = () => {
@@ -15,14 +14,13 @@ const Home: React.FC = () => {
 
   useEffect(() => {
     const fetchProjects = async () => {
-      if (!isFirebaseConfigured) {
+      if (!isFirebaseConfigured || !db) {
         setFeaturedProjects(PROPERTIES.slice(0, 3));
         setLoading(false);
         return;
       }
 
       try {
-        // Using compat syntax: db.collection().orderBy().limit().get()
         const snapshot = await db.collection("projects").orderBy("createdAt", "desc").limit(3).get();
         if (snapshot.empty) {
           setFeaturedProjects(PROPERTIES.slice(0, 3));
@@ -41,14 +39,13 @@ const Home: React.FC = () => {
 
   const handleLeadSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!isFirebaseConfigured) {
+    if (!isFirebaseConfigured || !db) {
       alert("Contact form is currently in demo mode. Please configure Firebase to receive leads.");
       return;
     }
 
     setFormStatus('sending');
     try {
-      // Using compat syntax: db.collection().add()
       await db.collection("leads").add({
         ...leadForm,
         timestamp: firebase.firestore.Timestamp.now()
@@ -115,14 +112,13 @@ const Home: React.FC = () => {
         </div>
       </section>
 
-      {/* Dynamic Projects from Firestore */}
+      {/* Dynamic Projects */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {!isFirebaseConfigured && (
           <div className="mb-8 p-4 bg-amber-50 border border-amber-200 rounded-2xl flex items-center text-amber-800 text-sm font-medium">
             <i className="fa-solid fa-triangle-exclamation mr-3 text-lg"></i>
             <div>
               <strong>Note:</strong> Firebase is not yet configured. Showing sample data. 
-              Please update <code className="bg-amber-100 px-1 rounded">firebase.ts</code> with your API keys.
             </div>
           </div>
         )}

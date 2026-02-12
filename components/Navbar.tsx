@@ -2,7 +2,11 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 
-const Navbar: React.FC = () => {
+interface NavbarProps {
+  user?: any;
+}
+
+const Navbar: React.FC<NavbarProps> = ({ user }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
@@ -11,7 +15,6 @@ const Navbar: React.FC = () => {
         <div className="flex justify-between h-20">
           <div className="flex items-center">
             <Link to="/" className="flex-shrink-0 flex items-center group">
-              {/* Simplified SVG Logo based on the image */}
               <div className="bg-royalGreen p-2 rounded-lg mr-3 group-hover:bg-green-800 transition-colors">
                  <svg width="32" height="32" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M50 5L85 85H15L50 5Z" stroke="white" strokeWidth="4" />
@@ -32,7 +35,9 @@ const Navbar: React.FC = () => {
           <div className="hidden md:flex items-center space-x-8">
             <Link to="/" className="text-slate-600 hover:text-royalGreen font-medium transition-colors">Home</Link>
             <Link to="/listings" className="text-slate-600 hover:text-royalGreen font-medium transition-colors">Listings</Link>
-            <Link to="/services" className="text-slate-600 hover:text-royalGreen font-medium transition-colors">Services</Link>
+            {user && (
+              <Link to="/admin" className="text-royalGold hover:text-royalGreen font-bold transition-colors">Admin Dashboard</Link>
+            )}
             <Link to="/contact" className="bg-royalGreen text-white px-6 py-2 rounded-full hover:bg-green-800 transition-colors font-medium">Contact Us</Link>
           </div>
           <div className="md:hidden flex items-center">
@@ -52,7 +57,9 @@ const Navbar: React.FC = () => {
           <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
             <Link to="/" onClick={() => setIsOpen(false)} className="block px-3 py-2 text-base font-medium text-slate-700 hover:text-royalGreen hover:bg-slate-50">Home</Link>
             <Link to="/listings" onClick={() => setIsOpen(false)} className="block px-3 py-2 text-base font-medium text-slate-700 hover:text-royalGreen hover:bg-slate-50">Listings</Link>
-            <Link to="/services" onClick={() => setIsOpen(false)} className="block px-3 py-2 text-base font-medium text-slate-700 hover:text-royalGreen hover:bg-slate-50">Services</Link>
+            {user && (
+              <Link to="/admin" onClick={() => setIsOpen(false)} className="block px-3 py-2 text-base font-bold text-royalGold hover:text-royalGreen hover:bg-slate-50">Admin Dashboard</Link>
+            )}
             <Link to="/contact" onClick={() => setIsOpen(false)} className="block px-3 py-2 text-base font-medium text-white bg-royalGreen rounded-md">Contact Us</Link>
           </div>
         </div>

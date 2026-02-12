@@ -10,9 +10,10 @@ const AdminDashboard = () => {
   const [leads, setLeads] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [isAdding, setIsAdding] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     title: '', description: '', location: '', priceRange: '', 
-    status: 'For Sale', type: 'Residential', beds: '', baths: '', sqft: ''
+    status: 'For Sale', type: 'Residential', beds: '', baths: '', sqft: '', features: ''
   });
   const [imageFile, setImageFile] = useState<File | null>(null);
   const navigate = useNavigate();
@@ -21,7 +22,6 @@ const AdminDashboard = () => {
     fetchData();
   }, [activeTab]);
 
-  // Using compat syntax for queries and fetches
   const fetchData = async () => {
     setLoading(true);
     try {
@@ -38,42 +38,54 @@ const AdminDashboard = () => {
     setLoading(false);
   };
 
-  // Using compat syntax: auth.signOut()
   const handleLogout = async () => {
     await auth.signOut();
     navigate('/');
   };
 
-  // Using compat syntax for storage and firestore additions
   const handleProjectSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     try {
-      let imageUrl = 'https://picsum.photos/800/600';
+      let imageUrl = formData['image'] || 'https://picsum.photos/800/600';
       if (imageFile) {
-        const storageRef = storage.ref(`projects/${Date.now()}_${imageFile.name}`);
+        // Upload to listings/ folder as requested
+        const storageRef = storage.ref(`listings/${Date.now()}_${imageFile.name}`);
         await storageRef.put(imageFile);
         imageUrl = await storageRef.getDownloadURL();
       }
 
-      await db.collection("projects").add({
+      const projectData = {
         ...formData,
+        beds: formData.beds ? parseInt(formData.beds) : null,
+        baths: formData.baths ? parseInt(formData.baths) : null,
+        sqft: formData.sqft ? parseInt(formData.sqft) : 0,
         image: imageUrl,
-        createdAt: firebase.firestore.Timestamp.now()
-      });
+        updatedAt: firebase.firestore.Timestamp.now()
+      };
+
+      if (editingId) {
+        await db.collection("projects").doc(editingId).update(projectData);
+      } else {
+        await db.collection("projects").add({
+          ...projectData,
+          createdAt: firebase.firestore.Timestamp.now()
+        });
+      }
+
       setIsAdding(false);
-      setFormData({ title: '', description: '', location: '', priceRange: '', status: 'For Sale', type: 'Residential', beds: '', baths: '', sqft: '' });
+      setEditingId(null);
+      setFormData({ title: '', description: '', location: '', priceRange: '', status: 'For Sale', type: 'Residential', beds: '', baths: '', sqft: '', features: '' });
       setImageFile(null);
       fetchData();
     } catch (err) {
       console.error(err);
-      alert("Error adding project.");
+      alert("Error saving project.");
     } finally {
       setLoading(false);
     }
   };
 
-  // Using compat syntax for deletion
   const handleDelete = async (projectId: string) => {
     if (window.confirm("Are you sure you want to delete this project?")) {
       await db.collection("projects").doc(projectId).delete();
@@ -81,7 +93,24 @@ const AdminDashboard = () => {
     }
   };
 
-  // Using compat syntax for updates
+  const handleEdit = (project: any) => {
+    setEditingId(project.id);
+    setFormData({
+      title: project.title || '',
+      description: project.description || '',
+      location: project.location || '',
+      priceRange: project.priceRange || '',
+      status: project.status || 'For Sale',
+      type: project.type || 'Residential',
+      beds: project.beds?.toString() || '',
+      baths: project.baths?.toString() || '',
+      sqft: project.sqft?.toString() || '',
+      features: project.features || ''
+    });
+    setIsAdding(true);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   const handleToggleStatus = async (projectId: string, currentStatus: string) => {
     const nextStatus = currentStatus === 'Sold' ? 'For Sale' : 'Sold';
     await db.collection("projects").doc(projectId).update({ status: nextStatus });
@@ -97,13 +126,13 @@ const AdminDashboard = () => {
         </div>
         <div className="flex space-x-4">
           <button 
-            onClick={() => setActiveTab('projects')}
+            onClick={() => { setActiveTab('projects'); setIsAdding(false); }}
             className={`px-6 py-2 rounded-full font-bold text-sm ${activeTab === 'projects' ? 'bg-royalGreen text-white' : 'bg-slate-100 text-slate-600'}`}
           >
             Projects
           </button>
           <button 
-            onClick={() => setActiveTab('leads')}
+            onClick={() => { setActiveTab('leads'); setIsAdding(false); }}
             className={`px-6 py-2 rounded-full font-bold text-sm ${activeTab === 'leads' ? 'bg-royalGreen text-white' : 'bg-slate-100 text-slate-600'}`}
           >
             Leads
@@ -117,9 +146,13 @@ const AdminDashboard = () => {
       {activeTab === 'projects' && (
         <div className="space-y-8">
           <div className="flex justify-between items-center">
-            <h2 className="text-xl font-bold text-slate-900">Project Management</h2>
+            <h2 className="text-xl font-bold text-slate-900">{editingId ? 'Edit Project' : 'Project Management'}</h2>
             <button 
-              onClick={() => setIsAdding(!isAdding)}
+              onClick={() => {
+                setIsAdding(!isAdding);
+                if (isAdding) setEditingId(null);
+                if (!isAdding) setFormData({ title: '', description: '', location: '', priceRange: '', status: 'For Sale', type: 'Residential', beds: '', baths: '', sqft: '', features: '' });
+              }}
               className="bg-royalGold text-white px-6 py-2 rounded-xl font-bold hover:bg-amber-600 transition-all flex items-center"
             >
               <i className={`fa-solid ${isAdding ? 'fa-minus' : 'fa-plus'} mr-2`}></i> 
@@ -162,13 +195,31 @@ const AdminDashboard = () => {
                   <option value="Land">Land</option>
                 </select>
               </div>
+              <div className="grid grid-cols-3 gap-2">
+                <div>
+                  <label className="block text-xs font-bold text-slate-500 mb-1">Beds</label>
+                  <input type="number" value={formData.beds} onChange={e => setFormData({...formData, beds: e.target.value})} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-2 py-2 outline-none" />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-slate-500 mb-1">Baths</label>
+                  <input type="number" value={formData.baths} onChange={e => setFormData({...formData, baths: e.target.value})} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-2 py-2 outline-none" />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-slate-500 mb-1">Sqft</label>
+                  <input type="number" value={formData.sqft} onChange={e => setFormData({...formData, sqft: e.target.value})} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-2 py-2 outline-none" />
+                </div>
+              </div>
               <div>
-                <label className="block text-sm font-bold text-slate-700 mb-2">Image/Brochure Upload</label>
+                <label className="block text-sm font-bold text-slate-700 mb-2">Features (comma separated)</label>
+                <input type="text" value={formData.features} onChange={e => setFormData({...formData, features: e.target.value})} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 outline-none" placeholder="e.g. Garden, Pool, 24/7 Security" />
+              </div>
+              <div>
+                <label className="block text-sm font-bold text-slate-700 mb-2">Image/PDF Upload</label>
                 <input type="file" onChange={e => setImageFile(e.target.files?.[0] || null)} className="w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-bold file:bg-royalGreen file:text-white hover:file:bg-green-800" />
               </div>
               <div className="flex items-end">
                 <button type="submit" disabled={loading} className="w-full bg-royalGreen text-white font-bold py-3 rounded-xl hover:bg-green-800 transition-all disabled:opacity-50">
-                  {loading ? 'Adding...' : 'Save Project'}
+                  {loading ? 'Saving...' : editingId ? 'Update Project' : 'Save Project'}
                 </button>
               </div>
             </form>
@@ -203,8 +254,11 @@ const AdminDashboard = () => {
                       </span>
                     </td>
                     <td className="px-6 py-4 text-right space-x-3">
+                      <button onClick={() => handleEdit(p)} className="text-royalGold hover:text-royalGreen font-bold text-xs">
+                        <i className="fa-solid fa-pen-to-square mr-1"></i> Edit
+                      </button>
                       <button onClick={() => handleToggleStatus(p.id, p.status)} className="text-royalGreen font-bold text-xs hover:underline">
-                        Toggle Sold/Sale
+                        Toggle Status
                       </button>
                       <button onClick={() => handleDelete(p.id)} className="text-red-500 hover:text-red-700">
                         <i className="fa-solid fa-trash"></i>

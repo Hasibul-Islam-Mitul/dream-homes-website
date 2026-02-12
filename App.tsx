@@ -1,5 +1,6 @@
-import React from 'react';
-import { HashRouter as Router, Routes, Route } from 'react-router-dom';
+
+import React, { useEffect, useState } from 'react';
+import { HashRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import ChatAssistant from './components/ChatAssistant';
 import Home from './pages/Home';
@@ -8,8 +9,8 @@ import PropertyDetails from './pages/PropertyDetails';
 import AdminLogin from './pages/AdminLogin';
 import AdminDashboard from './pages/AdminDashboard';
 import ProtectedRoute from './components/ProtectedRoute';
+import { auth } from './firebase';
 
-// Using standard function components to avoid strict React.FC typing issues.
 const Footer = () => (
   <footer className="bg-royalGreen text-white/70 py-20">
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -47,7 +48,7 @@ const Footer = () => (
             <li><a href="#" className="hover:text-royalGold transition-colors">Our Legacy</a></li>
             <li><a href="#" className="hover:text-royalGold transition-colors">Construction Portfolio</a></li>
             <li><a href="#" className="hover:text-royalGold transition-colors">Terms of Service</a></li>
-            <li><a href="#" className="hover:text-royalGold transition-colors">Agent Portal</a></li>
+            <li><Link to="/login" className="hover:text-royalGold transition-colors">Agent Portal</Link></li>
           </ul>
         </div>
         
@@ -70,18 +71,27 @@ const Footer = () => (
 );
 
 const App = () => {
+  const [user, setUser] = useState<any>(null);
+
+  useEffect(() => {
+    if (auth) {
+      const unsubscribe = auth.onAuthStateChanged((u: any) => setUser(u));
+      return () => unsubscribe();
+    }
+  }, []);
+
   return (
     <Router>
       <div className="min-h-screen flex flex-col">
-        <Navbar />
+        <Navbar user={user} />
         <main className="flex-grow">
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/listings" element={<Listings />} />
             <Route path="/property/:id" element={<PropertyDetails />} />
-            <Route path="/admin-login" element={<AdminLogin />} />
+            <Route path="/login" element={<AdminLogin />} />
             <Route 
-              path="/admin-dashboard" 
+              path="/admin" 
               element={
                 <ProtectedRoute>
                   <AdminDashboard />
@@ -89,7 +99,6 @@ const App = () => {
               } 
             />
             <Route path="/services" element={<div className="py-24 text-center"><h1 className="text-4xl font-bold uppercase text-royalGreen">Services Section Coming Soon</h1></div>} />
-            <Route path="/about" element={<div className="py-24 text-center"><h1 className="text-4xl font-bold uppercase text-royalGreen">About Section Coming Soon</h1></div>} />
             <Route path="/contact" element={<div className="py-24 text-center"><h1 className="text-4xl font-bold uppercase text-royalGreen">Contact Section Coming Soon</h1></div>} />
           </Routes>
         </main>

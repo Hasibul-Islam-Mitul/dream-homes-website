@@ -1,10 +1,40 @@
-import React from 'react';
+
+import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { PROPERTIES } from '../constants';
+import { db } from '../firebase';
 
 const PropertyDetails = () => {
   const { id } = useParams<{ id: string }>();
-  const property = PROPERTIES.find(p => p.id === id);
+  const [property, setProperty] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchProperty = async () => {
+      setLoading(true);
+      if (db && id) {
+        try {
+          const doc = await db.collection("projects").doc(id).get();
+          if (doc.exists) {
+            setProperty({ id: doc.id, ...doc.data() });
+          } else {
+            // Fallback to constants if not in DB
+            const local = PROPERTIES.find(p => p.id === id);
+            if (local) setProperty(local);
+          }
+        } catch (err) {
+          console.error(err);
+        }
+      } else {
+        const local = PROPERTIES.find(p => p.id === id);
+        if (local) setProperty(local);
+      }
+      setLoading(false);
+    };
+    fetchProperty();
+  }, [id]);
+
+  if (loading) return <div className="py-24 text-center"><i className="fa-solid fa-spinner fa-spin text-4xl text-royalGreen"></i></div>;
 
   if (!property) {
     return (
@@ -53,7 +83,7 @@ const PropertyDetails = () => {
               <div className="text-center border-l border-slate-200">
                 <i className="fa-solid fa-vector-square text-royalGreen/40 text-xl mb-2"></i>
                 <div className="text-sm text-slate-400 font-medium">Square Feet</div>
-                <div className="font-bold text-slate-900">{property.sqft.toLocaleString()}</div>
+                <div className="font-bold text-slate-900">{property.sqft?.toLocaleString() || 'N/A'}</div>
               </div>
               <div className="text-center border-l border-slate-200">
                 <i className="fa-solid fa-tag text-royalGreen/40 text-xl mb-2"></i>
@@ -63,14 +93,23 @@ const PropertyDetails = () => {
             </div>
             
             <h3 className="text-2xl font-bold text-slate-900 mb-4">Description</h3>
-            <p className="text-slate-600 leading-relaxed text-lg font-light">
+            <p className="text-slate-600 leading-relaxed text-lg font-light whitespace-pre-line">
               {property.description}
-              <br /><br />
-              Experience luxury like never before. This property embodies the peak of modern living, 
-              featuring top-tier finishing, energy-efficient systems, and a layout designed for 
-              both grand entertaining and peaceful relaxation. Whether you are looking for an 
-              investment or your forever home, this property offers unmatched value and style.
             </p>
+            
+            {property.features && (
+              <div className="mt-8">
+                <h3 className="text-2xl font-bold text-slate-900 mb-4">Key Features</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {property.features.split(',').map((feat: string, i: number) => (
+                    <div key={i} className="flex items-center text-slate-600">
+                      <i className="fa-solid fa-circle-check text-royalGreen mr-2"></i>
+                      {feat.trim()}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </div>
         
