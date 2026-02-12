@@ -1,6 +1,7 @@
 
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { SITE_CONFIG } from '../siteConfig';
 
 interface NavbarProps {
   user?: any;
@@ -15,7 +16,7 @@ const Navbar: React.FC<NavbarProps> = ({ user }) => {
   const NavLink = ({ to, children, active }: { to: string, children: React.ReactNode, active?: boolean }) => (
     <Link 
       to={to} 
-      className={`${active ? 'text-royalGreen border-b-2 border-royalGreen' : 'text-slate-600 hover:text-royalGreen'} font-bold transition-all px-2 py-1 text-sm uppercase tracking-tighter`}
+      className={`${active ? 'text-royalGreen border-b-2 border-royalGreen' : 'text-slate-600 hover:text-royalGreen'} font-bold transition-all px-2 py-1 text-xs uppercase tracking-tighter whitespace-nowrap`}
     >
       {children}
     </Link>
@@ -36,22 +37,31 @@ const Navbar: React.FC<NavbarProps> = ({ user }) => {
               </div>
               <div className="flex flex-col">
                 <span className="text-lg sm:text-xl font-bold tracking-tighter text-royalGreen leading-none uppercase">
-                  THE DREAM HOMES & CONSTRUCTIONS LTD.
+                  {SITE_CONFIG.name}
                 </span>
                 <span className="text-[10px] font-bold text-royalGold uppercase tracking-[0.3em] leading-tight mt-1">
-                  DREAM . BUILD . LIVE
+                  {SITE_CONFIG.tagline}
                 </span>
               </div>
             </Link>
           </div>
           <div className="hidden md:flex items-center space-x-6">
             <NavLink to="/" active={isActive('/')}>Home</NavLink>
-            <NavLink to="/listings" active={isActive('/listings')}>Inventory</NavLink>
-            <NavLink to="/services" active={isActive('/services')}>Expertise</NavLink>
-            {user && (
-              <NavLink to="/admin" active={isActive('/admin')}>Dashboard</NavLink>
+            <NavLink to="/listings" active={isActive('/listings')}>Projects</NavLink>
+            <NavLink to="/services" active={isActive('/services')}>Services</NavLink>
+            <NavLink to="/contact" active={isActive('/contact')}>Contact Us</NavLink>
+            
+            <div className="h-6 w-[1px] bg-slate-200"></div>
+
+            {user ? (
+              <Link to="/admin" className="bg-royalGold text-white px-6 py-2 rounded-xl hover:bg-amber-600 transition-all font-bold text-xs uppercase tracking-widest shadow-md">
+                Dashboard
+              </Link>
+            ) : (
+              <Link to="/login" className="text-royalGreen hover:text-green-800 font-bold text-xs uppercase tracking-widest flex items-center">
+                <i className="fa-solid fa-user-lock mr-2"></i> Login
+              </Link>
             )}
-            <Link to="/contact" className="bg-royalGreen text-white px-8 py-3 rounded-xl hover:bg-green-800 transition-all font-bold text-sm uppercase tracking-widest shadow-lg shadow-green-900/20">Contact Us</Link>
           </div>
           <div className="md:hidden flex items-center">
             <button
@@ -66,15 +76,19 @@ const Navbar: React.FC<NavbarProps> = ({ user }) => {
 
       {/* Mobile menu */}
       {isOpen && (
-        <div className="md:hidden bg-white border-t border-slate-100 animate-in slide-in-from-top-4 duration-300">
-          <div className="px-4 pt-4 pb-6 space-y-3">
-            <Link to="/" onClick={() => setIsOpen(false)} className="block px-3 py-3 text-base font-bold text-slate-700 hover:text-royalGreen hover:bg-slate-50 rounded-xl">Home</Link>
-            <Link to="/listings" onClick={() => setIsOpen(false)} className="block px-3 py-3 text-base font-bold text-slate-700 hover:text-royalGreen hover:bg-slate-50 rounded-xl">Inventory</Link>
-            <Link to="/services" onClick={() => setIsOpen(false)} className="block px-3 py-3 text-base font-bold text-slate-700 hover:text-royalGreen hover:bg-slate-50 rounded-xl">Expertise</Link>
-            {user && (
-              <Link to="/admin" onClick={() => setIsOpen(false)} className="block px-3 py-3 text-base font-bold text-royalGold hover:text-royalGreen hover:bg-slate-50 rounded-xl">Dashboard</Link>
-            )}
-            <Link to="/contact" onClick={() => setIsOpen(false)} className="block px-4 py-4 text-center text-base font-bold text-white bg-royalGreen rounded-xl shadow-lg">Contact Us Now</Link>
+        <div className="md:hidden bg-white border-t border-slate-100 animate-in slide-in-from-top-4 duration-300 shadow-xl">
+          <div className="px-4 pt-4 pb-6 space-y-2">
+            <Link to="/" onClick={() => setIsOpen(false)} className={`block px-3 py-3 text-base font-bold rounded-xl ${isActive('/') ? 'bg-royalGreen text-white' : 'text-slate-700'}`}>Home</Link>
+            <Link to="/listings" onClick={() => setIsOpen(false)} className={`block px-3 py-3 text-base font-bold rounded-xl ${isActive('/listings') ? 'bg-royalGreen text-white' : 'text-slate-700'}`}>Projects</Link>
+            <Link to="/services" onClick={() => setIsOpen(false)} className={`block px-3 py-3 text-base font-bold rounded-xl ${isActive('/services') ? 'bg-royalGreen text-white' : 'text-slate-700'}`}>Services</Link>
+            <Link to="/contact" onClick={() => setIsOpen(false)} className={`block px-3 py-3 text-base font-bold rounded-xl ${isActive('/contact') ? 'bg-royalGreen text-white' : 'text-slate-700'}`}>Contact Us</Link>
+            <div className="pt-2">
+              {user ? (
+                <Link to="/admin" onClick={() => setIsOpen(false)} className="block px-4 py-4 text-center text-base font-bold text-white bg-royalGold rounded-xl">Dashboard</Link>
+              ) : (
+                <Link to="/login" onClick={() => setIsOpen(false)} className="block px-4 py-4 text-center text-base font-bold text-white bg-royalGreen rounded-xl shadow-lg">Agent Login</Link>
+              )}
+            </div>
           </div>
         </div>
       )}

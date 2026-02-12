@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState } from 'react';
-import { HashRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import { HashRouter as Router, Routes, Route, Link, Navigate } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import ChatAssistant from './components/ChatAssistant';
 import Home from './pages/Home';
@@ -12,6 +12,7 @@ import Services from './pages/Services';
 import Contact from './pages/Contact';
 import ProtectedRoute from './components/ProtectedRoute';
 import { auth } from './firebase';
+import { SITE_CONFIG } from './siteConfig';
 
 const Footer = () => (
   <footer className="bg-royalGreen text-white/70 py-20">
@@ -19,16 +20,16 @@ const Footer = () => (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
         <div className="space-y-6">
           <div className="flex flex-col">
-            <span className="text-xl font-serif font-bold tracking-tight text-white uppercase leading-none">THE DREAM HOMES & CONSTRUCTIONS LTD.</span>
-            <span className="text-[9px] font-bold text-royalGold uppercase tracking-widest mt-2">DREAM . BUILD . LIVE</span>
+            <span className="text-xl font-serif font-bold tracking-tight text-white uppercase leading-none">{SITE_CONFIG.name}</span>
+            <span className="text-[9px] font-bold text-royalGold uppercase tracking-widest mt-2">{SITE_CONFIG.tagline}</span>
           </div>
           <p className="text-sm leading-relaxed font-light">
             Dhaka's premier partner for high-end real estate and modern construction solutions. Precision, integrity, and architectural brilliance since inception.
           </p>
           <div className="flex space-x-4">
-            {['facebook', 'instagram', 'linkedin', 'whatsapp'].map(social => (
-              <a key={social} href="#" className="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center hover:bg-royalGold hover:border-royalGold transition-all">
-                <i className={`fa-brands fa-${social === 'whatsapp' ? 'whatsapp' : social}`}></i>
+            {Object.entries(SITE_CONFIG.socials).map(([platform, url]) => (
+              <a key={platform} href={url} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center hover:bg-royalGold hover:border-royalGold transition-all">
+                <i className={`fa-brands fa-${platform}`}></i>
               </a>
             ))}
           </div>
@@ -57,16 +58,16 @@ const Footer = () => (
         <div>
           <h4 className="text-white font-bold mb-6 uppercase tracking-widest text-xs">Contact Details</h4>
           <ul className="space-y-4 text-sm font-light">
-            <li className="flex items-start"><i className="fa-solid fa-location-dot mr-3 mt-1 text-royalGold"></i> ECB Chattor, Dhaka Cantonment, Dhaka-1206</li>
-            <li className="flex items-center"><i className="fa-solid fa-phone mr-3 text-royalGold"></i> +880 1708 364030</li>
-            <li className="flex items-center"><i className="fa-solid fa-envelope mr-3 text-royalGold"></i> contact@dreamhomes.com.bd</li>
+            <li className="flex items-start"><i className="fa-solid fa-location-dot mr-3 mt-1 text-royalGold"></i> {SITE_CONFIG.address}</li>
+            <li className="flex items-center"><i className="fa-solid fa-phone mr-3 text-royalGold"></i> {SITE_CONFIG.phone}</li>
+            <li className="flex items-center"><i className="fa-solid fa-envelope mr-3 text-royalGold"></i> {SITE_CONFIG.email}</li>
           </ul>
         </div>
       </div>
       
       <div className="pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center text-[10px] tracking-widest uppercase text-white/40 font-bold">
-        <p>&copy; 2024 The Dream Homes & Constructions Ltd. All Rights Reserved.</p>
-        <p className="mt-4 md:mt-0 italic">Dhaka . Purbachal . Mirpur . Cantonment</p>
+        <p>&copy; 2024 {SITE_CONFIG.name}. All Rights Reserved.</p>
+        <p className="mt-4 md:mt-0 italic">Dhaka . Purbachal . Mirpur . Cantonment . Banani</p>
       </div>
     </div>
   </footer>
@@ -74,13 +75,27 @@ const Footer = () => (
 
 const App = () => {
   const [user, setUser] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (auth) {
-      const unsubscribe = auth.onAuthStateChanged((u: any) => setUser(u));
+      const unsubscribe = auth.onAuthStateChanged((u: any) => {
+        setUser(u);
+        setLoading(false);
+      });
       return () => unsubscribe();
+    } else {
+      setLoading(false);
     }
   }, []);
+
+  if (loading) {
+    return (
+      <div className="h-screen flex items-center justify-center bg-white">
+        <i className="fa-solid fa-spinner fa-spin text-4xl text-royalGreen"></i>
+      </div>
+    );
+  }
 
   return (
     <Router>
@@ -93,7 +108,13 @@ const App = () => {
             <Route path="/property/:id" element={<PropertyDetails />} />
             <Route path="/services" element={<Services />} />
             <Route path="/contact" element={<Contact />} />
-            <Route path="/login" element={<AdminLogin />} />
+            
+            {/* If logged in, /login redirects to /admin */}
+            <Route 
+              path="/login" 
+              element={user ? <Navigate to="/admin" replace /> : <AdminLogin />} 
+            />
+            
             <Route 
               path="/admin" 
               element={
