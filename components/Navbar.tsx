@@ -28,12 +28,15 @@ const Navbar: React.FC<NavbarProps> = ({ user }) => {
         <div className="flex justify-between h-20">
           <div className="flex items-center">
             <Link to="/" className="flex-shrink-0 flex items-center group">
-              <div className="bg-royalGreen p-2 rounded-lg mr-3 group-hover:bg-green-800 transition-colors shadow-lg shadow-green-900/20">
-                 <svg width="32" height="32" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M50 5L85 85H15L50 5Z" stroke="white" strokeWidth="4" />
-                    <path d="M40 95V45H60V95" stroke="#c49a6c" strokeWidth="4" />
-                    <path d="M50 15L60 35L80 35L65 48L70 68L50 55L30 68L35 48L20 35L40 35L50 15Z" fill="white" transform="scale(0.3) translate(110, -10)" />
-                 </svg>
+              <div className="w-12 h-12 bg-royalGreen rounded-lg mr-3 group-hover:bg-green-800 transition-colors shadow-lg shadow-green-900/20 overflow-hidden flex items-center justify-center">
+                 {SITE_CONFIG.logo ? (
+                   <img src={SITE_CONFIG.logo} alt="Logo" className="w-full h-full object-cover" />
+                 ) : (
+                   <svg width="32" height="32" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M50 5L85 85H15L50 5Z" stroke="white" strokeWidth="4" />
+                      <path d="M40 95V45H60V95" stroke="#c49a6c" strokeWidth="4" />
+                   </svg>
+                 )}
               </div>
               <div className="flex flex-col">
                 <span className="text-lg sm:text-xl font-bold tracking-tighter text-royalGreen leading-none uppercase">

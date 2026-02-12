@@ -20,6 +20,9 @@ const Footer = () => (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
         <div className="space-y-6">
           <div className="flex flex-col">
+            {SITE_CONFIG.logo && (
+              <img src={SITE_CONFIG.logo} alt="Footer Logo" className="w-16 h-16 object-cover rounded-lg mb-4 border border-white/20" />
+            )}
             <span className="text-xl font-serif font-bold tracking-tight text-white uppercase leading-none">{SITE_CONFIG.name}</span>
             <span className="text-[9px] font-bold text-royalGold uppercase tracking-widest mt-2">{SITE_CONFIG.tagline}</span>
           </div>
@@ -49,7 +52,7 @@ const Footer = () => (
           <h4 className="text-white font-bold mb-6 uppercase tracking-widest text-xs">Company</h4>
           <ul className="space-y-4 text-sm font-light">
             <li><Link to="/services" className="hover:text-royalGold transition-colors">Our Services</Link></li>
-            <li><Link to="/listings" className="hover:text-royalGold transition-colors">Project Portfolio</Link></li>
+            <li><Link to="/listings" className="hover:text-royalGold transition-colors">Projects Portfolio</Link></li>
             <li><a href="#" className="hover:text-royalGold transition-colors">Terms of Service</a></li>
             <li><Link to="/login" className="hover:text-royalGold transition-colors">Agent Admin Access</Link></li>
           </ul>
