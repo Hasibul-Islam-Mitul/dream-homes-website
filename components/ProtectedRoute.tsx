@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
 import { auth } from '../firebase';
@@ -12,9 +11,15 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<any>(null);
 
-  // Using compat syntax: auth.onAuthStateChanged instead of named import to fix module error.
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((user) => {
+    // Safety check: if auth is not initialized (e.g., missing API key), don't try to subscribe.
+    if (!auth) {
+      console.warn("Auth not available in ProtectedRoute.");
+      setLoading(false);
+      return;
+    }
+
+    const unsubscribe = auth.onAuthStateChanged((user: any) => {
       setUser(user);
       setLoading(false);
     });

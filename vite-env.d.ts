@@ -1,7 +1,5 @@
-/// <reference types="vite/client" />
-
-// Fix: Removed 'vite/client' reference on the line below to resolve "not found" error.
 // Manual interface declarations for Vite's ImportMeta to support typed environment variables.
+// The 'vite/client' reference was removed to resolve "not found" errors in the current environment.
 interface ImportMetaEnv {
   readonly VITE_FIREBASE_API_KEY: string
   readonly VITE_FIREBASE_AUTH_DOMAIN: string
