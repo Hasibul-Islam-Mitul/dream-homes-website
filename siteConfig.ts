@@ -2,7 +2,7 @@
 export const SITE_CONFIG = {
   name: "The Dream Homes & Constructions Ltd.",
   tagline: "DREAM . BUILD . LIVE",
-  logo: "https://scontent.fdac5-2.fna.fbcdn.net/v/t39.30808-6/628340132_122165475362926895_6853259048940031467_n.jpg?_nc_cat=107&ccb=1-7&_nc_sid=6ee11a&_nc_eui2=AeF4j3A9AfeK4m8avp-272wXZYQHCLaDtAhlhAcItoO0CDd5z4RkvV0je49IzS1G1EffLFa9BsawGB-Y85UzZHF7&_nc_ohc=BrVJEEgKzRUQ7kNvwFdR1VI&_nc_oc=AdldVBhWKlif5Of0CtJ40QD5ZBLQDkUZ54If1g1bsnegUshfvQiD823d2_p3CsCrP5k&_nc_zt=23&_nc_ht=scontent.fdac5-2.fna&_nc_gid=EM033FEutZDXN92YCeoFPQ&oh=00_AftAArHvYYgmp98fogqpf16-gK9GjK5fbCswMNc0yVrEKg&oe=699432EE",
+  logo: "https://scontent.fdac5-2.fna.fbcdn.net/v/t39.30808-6/631228276_122166060272926895_3967650468832997147_n.jpg?_nc_cat=101&ccb=1-7&_nc_sid=6ee11a&_nc_ohc=ca3LgfUU7DYQ7kNvwG3grmp&_nc_oc=AdnIWpUzf2GZqcezvPpHoP6KR4Ks8ZeYlYUW44GewYgmyjz4X4Zod4ZR0DKuCBVKtHY&_nc_zt=23&_nc_ht=scontent.fdac5-2.fna&_nc_gid=huJG6SnisKD-7RlaGs7mXg&oh=00_AftWW8zolMKjSZulp_QGeYqHb3zTbmS4e6CR6hg6Cpdz3Q&oe=69941AC7",
   phone: "+880 1708 364030",
   email: "contact@dreamhomes.com.bd",
   salesEmail: "sales@dreamhomes.com.bd",
