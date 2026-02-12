@@ -1,0 +1,28 @@
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-slate-50 text-slate-900 font-sans;
+  }
+  h1, h2, h3, .font-serif {
+    @apply font-serif;
+  }
+}
+
+.bg-royal-green { background-color: #004d2c; }
+.text-royal-green { color: #004d2c; }
+.border-royal-green { border-color: #004d2c; }
+.bg-royal-gold { background-color: #c49a6c; }
+.text-royal-gold { color: #c49a6c; }
+
+@keyframes slow-zoom {
+  0% { transform: scale(1); }
+  100% { transform: scale(1.1); }
+}
+
+.animate-slow-zoom {
+  animation: slow-zoom 20s ease-in-out infinite alternate;
+}

@@ -2,7 +2,7 @@
 import { GoogleGenAI } from "@google/genai";
 import { ChatMessage } from "../types";
 
-// Correctly initialize GoogleGenAI with direct access to process.env.API_KEY as per guidelines.
+// Always use process.env.API_KEY exclusively for initialization as per Gemini API guidelines.
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
 export const getGeminiAssistantResponse = async (history: ChatMessage[], userMessage: string) => {
@@ -22,7 +22,6 @@ export const getGeminiAssistantResponse = async (history: ChatMessage[], userMes
       },
     });
 
-    // Access .text property directly as per guidelines (not a method).
     return response.text || "I apologize, but I'm having trouble processing that request. Please contact our main office at +8801708364030.";
   } catch (error) {
     console.error("Gemini API Error:", error);
