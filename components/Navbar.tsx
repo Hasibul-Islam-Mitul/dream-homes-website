@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 interface NavbarProps {
   user?: any;
@@ -8,6 +8,18 @@ interface NavbarProps {
 
 const Navbar: React.FC<NavbarProps> = ({ user }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const location = useLocation();
+
+  const isActive = (path: string) => location.pathname === path;
+
+  const NavLink = ({ to, children, active }: { to: string, children: React.ReactNode, active?: boolean }) => (
+    <Link 
+      to={to} 
+      className={`${active ? 'text-royalGreen border-b-2 border-royalGreen' : 'text-slate-600 hover:text-royalGreen'} font-bold transition-all px-2 py-1 text-sm uppercase tracking-tighter`}
+    >
+      {children}
+    </Link>
+  );
 
   return (
     <nav className="bg-white border-b border-slate-200 sticky top-0 z-50">
@@ -15,7 +27,7 @@ const Navbar: React.FC<NavbarProps> = ({ user }) => {
         <div className="flex justify-between h-20">
           <div className="flex items-center">
             <Link to="/" className="flex-shrink-0 flex items-center group">
-              <div className="bg-royalGreen p-2 rounded-lg mr-3 group-hover:bg-green-800 transition-colors">
+              <div className="bg-royalGreen p-2 rounded-lg mr-3 group-hover:bg-green-800 transition-colors shadow-lg shadow-green-900/20">
                  <svg width="32" height="32" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M50 5L85 85H15L50 5Z" stroke="white" strokeWidth="4" />
                     <path d="M40 95V45H60V95" stroke="#c49a6c" strokeWidth="4" />
@@ -26,19 +38,20 @@ const Navbar: React.FC<NavbarProps> = ({ user }) => {
                 <span className="text-lg sm:text-xl font-bold tracking-tighter text-royalGreen leading-none uppercase">
                   THE DREAM HOMES & CONSTRUCTIONS LTD.
                 </span>
-                <span className="text-[10px] font-bold text-royalGold uppercase tracking-[0.3em] leading-tight">
+                <span className="text-[10px] font-bold text-royalGold uppercase tracking-[0.3em] leading-tight mt-1">
                   DREAM . BUILD . LIVE
                 </span>
               </div>
             </Link>
           </div>
-          <div className="hidden md:flex items-center space-x-8">
-            <Link to="/" className="text-slate-600 hover:text-royalGreen font-medium transition-colors">Home</Link>
-            <Link to="/listings" className="text-slate-600 hover:text-royalGreen font-medium transition-colors">Listings</Link>
+          <div className="hidden md:flex items-center space-x-6">
+            <NavLink to="/" active={isActive('/')}>Home</NavLink>
+            <NavLink to="/listings" active={isActive('/listings')}>Inventory</NavLink>
+            <NavLink to="/services" active={isActive('/services')}>Expertise</NavLink>
             {user && (
-              <Link to="/admin" className="text-royalGold hover:text-royalGreen font-bold transition-colors">Admin Dashboard</Link>
+              <NavLink to="/admin" active={isActive('/admin')}>Dashboard</NavLink>
             )}
-            <Link to="/contact" className="bg-royalGreen text-white px-6 py-2 rounded-full hover:bg-green-800 transition-colors font-medium">Contact Us</Link>
+            <Link to="/contact" className="bg-royalGreen text-white px-8 py-3 rounded-xl hover:bg-green-800 transition-all font-bold text-sm uppercase tracking-widest shadow-lg shadow-green-900/20">Contact Us</Link>
           </div>
           <div className="md:hidden flex items-center">
             <button
@@ -53,14 +66,15 @@ const Navbar: React.FC<NavbarProps> = ({ user }) => {
 
       {/* Mobile menu */}
       {isOpen && (
-        <div className="md:hidden bg-white border-t border-slate-100 animate-fade-in-down">
-          <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-            <Link to="/" onClick={() => setIsOpen(false)} className="block px-3 py-2 text-base font-medium text-slate-700 hover:text-royalGreen hover:bg-slate-50">Home</Link>
-            <Link to="/listings" onClick={() => setIsOpen(false)} className="block px-3 py-2 text-base font-medium text-slate-700 hover:text-royalGreen hover:bg-slate-50">Listings</Link>
+        <div className="md:hidden bg-white border-t border-slate-100 animate-in slide-in-from-top-4 duration-300">
+          <div className="px-4 pt-4 pb-6 space-y-3">
+            <Link to="/" onClick={() => setIsOpen(false)} className="block px-3 py-3 text-base font-bold text-slate-700 hover:text-royalGreen hover:bg-slate-50 rounded-xl">Home</Link>
+            <Link to="/listings" onClick={() => setIsOpen(false)} className="block px-3 py-3 text-base font-bold text-slate-700 hover:text-royalGreen hover:bg-slate-50 rounded-xl">Inventory</Link>
+            <Link to="/services" onClick={() => setIsOpen(false)} className="block px-3 py-3 text-base font-bold text-slate-700 hover:text-royalGreen hover:bg-slate-50 rounded-xl">Expertise</Link>
             {user && (
-              <Link to="/admin" onClick={() => setIsOpen(false)} className="block px-3 py-2 text-base font-bold text-royalGold hover:text-royalGreen hover:bg-slate-50">Admin Dashboard</Link>
+              <Link to="/admin" onClick={() => setIsOpen(false)} className="block px-3 py-3 text-base font-bold text-royalGold hover:text-royalGreen hover:bg-slate-50 rounded-xl">Dashboard</Link>
             )}
-            <Link to="/contact" onClick={() => setIsOpen(false)} className="block px-3 py-2 text-base font-medium text-white bg-royalGreen rounded-md">Contact Us</Link>
+            <Link to="/contact" onClick={() => setIsOpen(false)} className="block px-4 py-4 text-center text-base font-bold text-white bg-royalGreen rounded-xl shadow-lg">Contact Us Now</Link>
           </div>
         </div>
       )}

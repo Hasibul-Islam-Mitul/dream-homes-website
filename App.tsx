@@ -8,6 +8,8 @@ import Listings from './pages/Listings';
 import PropertyDetails from './pages/PropertyDetails';
 import AdminLogin from './pages/AdminLogin';
 import AdminDashboard from './pages/AdminDashboard';
+import Services from './pages/Services';
+import Contact from './pages/Contact';
 import ProtectedRoute from './components/ProtectedRoute';
 import { auth } from './firebase';
 
@@ -17,11 +19,11 @@ const Footer = () => (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
         <div className="space-y-6">
           <div className="flex flex-col">
-            <span className="text-xl font-serif font-bold tracking-tight text-white uppercase">THE DREAM HOMES & CONSTRUCTIONS LTD.</span>
-            <span className="text-[9px] font-bold text-royalGold uppercase tracking-widest">DREAM . BUILD . LIVE</span>
+            <span className="text-xl font-serif font-bold tracking-tight text-white uppercase leading-none">THE DREAM HOMES & CONSTRUCTIONS LTD.</span>
+            <span className="text-[9px] font-bold text-royalGold uppercase tracking-widest mt-2">DREAM . BUILD . LIVE</span>
           </div>
-          <p className="text-sm leading-relaxed">
-            Dhaka's premier partner for high-end real estate and modern construction solutions. Precision, integrity, and architectural brilliance.
+          <p className="text-sm leading-relaxed font-light">
+            Dhaka's premier partner for high-end real estate and modern construction solutions. Precision, integrity, and architectural brilliance since inception.
           </p>
           <div className="flex space-x-4">
             {['facebook', 'instagram', 'linkedin', 'whatsapp'].map(social => (
@@ -33,38 +35,38 @@ const Footer = () => (
         </div>
         
         <div>
-          <h4 className="text-white font-bold mb-6">Key Locations</h4>
-          <ul className="space-y-4 text-sm">
+          <h4 className="text-white font-bold mb-6 uppercase tracking-widest text-xs">Key Locations</h4>
+          <ul className="space-y-4 text-sm font-light">
             <li><a href="#" className="hover:text-royalGold transition-colors">Purbachal 300 ft</a></li>
             <li><a href="#" className="hover:text-royalGold transition-colors">Mirpur DOHS</a></li>
             <li><a href="#" className="hover:text-royalGold transition-colors">Trust Green City</a></li>
-            <li><a href="#" className="hover:text-royalGold transition-colors">Shagupta</a></li>
+            <li><a href="#" className="hover:text-royalGold transition-colors">Shagupta Area</a></li>
           </ul>
         </div>
         
         <div>
-          <h4 className="text-white font-bold mb-6">Company</h4>
-          <ul className="space-y-4 text-sm">
-            <li><a href="#" className="hover:text-royalGold transition-colors">Our Legacy</a></li>
-            <li><a href="#" className="hover:text-royalGold transition-colors">Construction Portfolio</a></li>
+          <h4 className="text-white font-bold mb-6 uppercase tracking-widest text-xs">Company</h4>
+          <ul className="space-y-4 text-sm font-light">
+            <li><Link to="/services" className="hover:text-royalGold transition-colors">Our Services</Link></li>
+            <li><Link to="/listings" className="hover:text-royalGold transition-colors">Project Portfolio</Link></li>
             <li><a href="#" className="hover:text-royalGold transition-colors">Terms of Service</a></li>
-            <li><Link to="/login" className="hover:text-royalGold transition-colors">Agent Portal</Link></li>
+            <li><Link to="/login" className="hover:text-royalGold transition-colors">Agent Admin Access</Link></li>
           </ul>
         </div>
         
         <div>
-          <h4 className="text-white font-bold mb-6">Contact Details</h4>
-          <ul className="space-y-4 text-sm">
+          <h4 className="text-white font-bold mb-6 uppercase tracking-widest text-xs">Contact Details</h4>
+          <ul className="space-y-4 text-sm font-light">
             <li className="flex items-start"><i className="fa-solid fa-location-dot mr-3 mt-1 text-royalGold"></i> ECB Chattor, Dhaka Cantonment, Dhaka-1206</li>
-            <li className="flex items-center"><i className="fa-solid fa-phone mr-3 text-royalGold"></i> +8801708364030</li>
+            <li className="flex items-center"><i className="fa-solid fa-phone mr-3 text-royalGold"></i> +880 1708 364030</li>
             <li className="flex items-center"><i className="fa-solid fa-envelope mr-3 text-royalGold"></i> contact@dreamhomes.com.bd</li>
           </ul>
         </div>
       </div>
       
-      <div className="pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center text-[10px] tracking-widest uppercase text-white/40">
+      <div className="pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center text-[10px] tracking-widest uppercase text-white/40 font-bold">
         <p>&copy; 2024 The Dream Homes & Constructions Ltd. All Rights Reserved.</p>
-        <p className="mt-4 md:mt-0">Dhaka . Purbachal . Mirpur</p>
+        <p className="mt-4 md:mt-0 italic">Dhaka . Purbachal . Mirpur . Cantonment</p>
       </div>
     </div>
   </footer>
@@ -89,6 +91,8 @@ const App = () => {
             <Route path="/" element={<Home />} />
             <Route path="/listings" element={<Listings />} />
             <Route path="/property/:id" element={<PropertyDetails />} />
+            <Route path="/services" element={<Services />} />
+            <Route path="/contact" element={<Contact />} />
             <Route path="/login" element={<AdminLogin />} />
             <Route 
               path="/admin" 
@@ -98,8 +102,6 @@ const App = () => {
                 </ProtectedRoute>
               } 
             />
-            <Route path="/services" element={<div className="py-24 text-center"><h1 className="text-4xl font-bold uppercase text-royalGreen">Services Section Coming Soon</h1></div>} />
-            <Route path="/contact" element={<div className="py-24 text-center"><h1 className="text-4xl font-bold uppercase text-royalGreen">Contact Section Coming Soon</h1></div>} />
           </Routes>
         </main>
         <Footer />
