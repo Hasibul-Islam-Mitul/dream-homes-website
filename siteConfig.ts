@@ -18,7 +18,7 @@ export const SITE_CONFIG = {
   areas: [
     "Dhaka Cantonment Area",
     "Bashundhara Residential Area",
-    "Ashulia Model Town",
+    "Trust Green City (Mirpur DOHS)",
     "Khilkhet-Nikunja",
     "Mirpur-Dhanmondi"
   ],
