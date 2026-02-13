@@ -1,10 +1,12 @@
+
 import React, { useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
 import { auth } from '../firebase';
 
 // Explicitly define props to include children for better type compatibility in strict environments.
 interface ProtectedRouteProps {
-  children: React.ReactNode;
+  // Fix: Make children optional to resolve TS error in App.tsx usage
+  children?: React.ReactNode;
 }
 
 const ProtectedRoute = ({ children }: ProtectedRouteProps) => {

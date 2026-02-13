@@ -13,7 +13,8 @@ const Navbar: React.FC<NavbarProps> = ({ user }) => {
 
   const isActive = (path: string) => location.pathname === path;
 
-  const NavLink = ({ to, children, active }: { to: string, children: React.ReactNode, active?: boolean }) => (
+  // Fix: Make children optional to resolve TS error in usage lines 47-50
+  const NavLink = ({ to, children, active }: { to: string, children?: React.ReactNode, active?: boolean }) => (
     <Link 
       to={to} 
       className={`${active ? 'text-royalGreen border-b-2 border-royalGreen' : 'text-slate-600 hover:text-royalGreen'} font-bold transition-all px-2 py-1 text-xs uppercase tracking-tighter whitespace-nowrap`}
@@ -25,30 +26,25 @@ const Navbar: React.FC<NavbarProps> = ({ user }) => {
   return (
     <nav className="bg-white border-b border-slate-200 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-20">
+        <div className="flex justify-between h-24">
           <div className="flex items-center">
             <Link to="/" className="flex-shrink-0 flex items-center group">
-              <div className="w-12 h-12 bg-royalGreen rounded-lg mr-3 group-hover:bg-green-800 transition-colors shadow-lg shadow-green-900/20 overflow-hidden flex items-center justify-center">
-                 {SITE_CONFIG.logo ? (
-                   <img src={SITE_CONFIG.logo} alt="Logo" className="w-full h-full object-cover" />
-                 ) : (
-                   <svg width="32" height="32" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M50 5L85 85H15L50 5Z" stroke="white" strokeWidth="4" />
-                      <path d="M40 95V45H60V95" stroke="#c49a6c" strokeWidth="4" />
-                   </svg>
-                 )}
-              </div>
+              <img src={SITE_CONFIG.logo} alt="Logo" className="h-20 md:h-24 w-auto object-contain mr-4" />
               <div className="flex flex-col">
-                <span className="text-lg sm:text-xl font-bold tracking-tighter text-royalGreen leading-none uppercase">
+                <span className="text-xl sm:text-2xl font-bold tracking-tighter text-royalGreen leading-none uppercase">
                   {SITE_CONFIG.name}
                 </span>
-                <span className="text-[10px] font-bold text-royalGold uppercase tracking-[0.3em] leading-tight mt-1">
-                  {SITE_CONFIG.tagline}
-                </span>
+                <div className="flex justify-between w-full mt-1 px-[2px]">
+                   {SITE_CONFIG.tagline.split("").map((char, i) => (
+                     <span key={i} className="text-[12px] md:text-[14px] font-bold text-royalGold uppercase leading-tight">
+                       {char === " " ? "\u00A0" : char}
+                     </span>
+                   ))}
+                </div>
               </div>
             </Link>
           </div>
-          <div className="hidden md:flex items-center space-x-6">
+          <div className="hidden lg:flex items-center space-x-6">
             <NavLink to="/" active={isActive('/')}>Home</NavLink>
             <NavLink to="/listings" active={isActive('/listings')}>Projects</NavLink>
             <NavLink to="/services" active={isActive('/services')}>Services</NavLink>
@@ -66,7 +62,7 @@ const Navbar: React.FC<NavbarProps> = ({ user }) => {
               </Link>
             )}
           </div>
-          <div className="md:hidden flex items-center">
+          <div className="lg:hidden flex items-center">
             <button
               onClick={() => setIsOpen(!isOpen)}
               className="inline-flex items-center justify-center p-2 rounded-md text-slate-400 hover:text-royalGreen hover:bg-slate-100 focus:outline-none"
@@ -79,7 +75,7 @@ const Navbar: React.FC<NavbarProps> = ({ user }) => {
 
       {/* Mobile menu */}
       {isOpen && (
-        <div className="md:hidden bg-white border-t border-slate-100 animate-in slide-in-from-top-4 duration-300 shadow-xl">
+        <div className="lg:hidden bg-white border-t border-slate-100 animate-in slide-in-from-top-4 duration-300 shadow-xl">
           <div className="px-4 pt-4 pb-6 space-y-2">
             <Link to="/" onClick={() => setIsOpen(false)} className={`block px-3 py-3 text-base font-bold rounded-xl ${isActive('/') ? 'bg-royalGreen text-white' : 'text-slate-700'}`}>Home</Link>
             <Link to="/listings" onClick={() => setIsOpen(false)} className={`block px-3 py-3 text-base font-bold rounded-xl ${isActive('/listings') ? 'bg-royalGreen text-white' : 'text-slate-700'}`}>Projects</Link>

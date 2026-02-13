@@ -1,10 +1,9 @@
 
 import { GoogleGenAI } from "@google/genai";
 import { ChatMessage } from "../types";
+import { SITE_CONFIG } from "../siteConfig";
 
 export const getGeminiAssistantResponse = async (history: ChatMessage[], userMessage: string) => {
-  // Always use process.env.API_KEY exclusively for initialization.
-  // We initialize the client inside the function to ensure it always uses the most current API key available.
   const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
   try {
@@ -18,15 +17,14 @@ export const getGeminiAssistantResponse = async (history: ChatMessage[], userMes
         { role: 'user', parts: [{ text: userMessage }] }
       ],
       config: {
-        systemInstruction: "You are the AI Assistant for 'The Dream Homes & Constructions Ltd.', a premium real estate and construction company based in Dhaka, Bangladesh. Our headquarters is at ECB Chattor, Dhaka Cantonment. We specialize in Purbachal 300ft, Mirpur DOHS, Trust Green City, and Shagupta. Be professional, helpful, and aware of the Bangladeshi real estate market. When asked about prices, provide ranges in BDT (৳). Encourage users to call us at +8801708364030 for specific plot visits or luxury apartment viewings.",
+        systemInstruction: `You are the AI Assistant for '${SITE_CONFIG.name}', a premier real estate and construction company based in Dhaka, Bangladesh. We specialize in high-growth areas including ${SITE_CONFIG.areas.join(", ")}. Be professional, luxurious, and helpful. When asked about prices, provide ranges in BDT (৳) using terms like "Lac" or "Crore". Encourage users to call our helpline at ${SITE_CONFIG.phone} or email ${SITE_CONFIG.email}. Our head office is at ${SITE_CONFIG.address}. Focus on building trust and showcasing architectural excellence.`,
         temperature: 0.7,
       },
     });
 
-    // Directly access the .text property of GenerateContentResponse.
-    return response.text || "I apologize, but I'm having trouble processing that request. Please contact our main office at +8801708364030.";
+    return response.text || `I apologize, please contact our support at ${SITE_CONFIG.phone}.`;
   } catch (error) {
     console.error("Gemini API Error:", error);
-    return "I'm sorry, I'm currently offline. Please try again later or contact us directly at +8801708364030.";
+    return `I'm sorry, I'm currently offline. Please call us at ${SITE_CONFIG.phone}.`;
   }
 };
