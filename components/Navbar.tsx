@@ -13,11 +13,10 @@ const Navbar: React.FC<NavbarProps> = ({ user }) => {
 
   const isActive = (path: string) => location.pathname === path;
 
-  // Fix: Make children optional to resolve TS error in usage lines 47-50
   const NavLink = ({ to, children, active }: { to: string, children?: React.ReactNode, active?: boolean }) => (
     <Link 
       to={to} 
-      className={`${active ? 'text-royalGreen border-b-2 border-royalGreen' : 'text-slate-600 hover:text-royalGreen'} font-bold transition-all px-2 py-1 text-xs uppercase tracking-tighter whitespace-nowrap`}
+      className={`${active ? 'text-royalGreen border-b-2 border-royalGreen' : 'text-slate-600 hover:text-royalGreen'} font-bold transition-all px-2 py-1 text-[11px] uppercase tracking-wider whitespace-nowrap`}
     >
       {children}
     </Link>
@@ -26,17 +25,17 @@ const Navbar: React.FC<NavbarProps> = ({ user }) => {
   return (
     <nav className="bg-white border-b border-slate-200 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-24">
+        <div className="flex justify-between h-20 items-center">
           <div className="flex items-center">
             <Link to="/" className="flex-shrink-0 flex items-center group">
-              <img src={SITE_CONFIG.logo} alt="Logo" className="h-20 md:h-24 w-auto object-contain mr-4" />
+              <img src={SITE_CONFIG.logo} alt="Logo" className="h-14 md:h-16 w-auto object-contain mr-3" />
               <div className="flex flex-col">
-                <span className="text-xl sm:text-2xl font-bold tracking-tighter text-royalGreen leading-none uppercase">
+                <span className="text-base sm:text-lg font-bold tracking-tight text-royalGreen leading-none uppercase">
                   {SITE_CONFIG.name}
                 </span>
-                <div className="flex justify-between w-full mt-1 px-[2px]">
+                <div className="flex justify-between w-full mt-1 px-[1px]">
                    {SITE_CONFIG.tagline.split("").map((char, i) => (
-                     <span key={i} className="text-[12px] md:text-[14px] font-bold text-royalGold uppercase leading-tight">
+                     <span key={i} className="text-[9px] md:text-[10px] font-bold text-royalGold uppercase leading-tight tracking-tighter">
                        {char === " " ? "\u00A0" : char}
                      </span>
                    ))}
@@ -44,20 +43,20 @@ const Navbar: React.FC<NavbarProps> = ({ user }) => {
               </div>
             </Link>
           </div>
-          <div className="hidden lg:flex items-center space-x-6">
+          <div className="hidden lg:flex items-center space-x-5">
             <NavLink to="/" active={isActive('/')}>Home</NavLink>
             <NavLink to="/listings" active={isActive('/listings')}>Projects</NavLink>
             <NavLink to="/services" active={isActive('/services')}>Services</NavLink>
             <NavLink to="/contact" active={isActive('/contact')}>Contact Us</NavLink>
             
-            <div className="h-6 w-[1px] bg-slate-200"></div>
+            <div className="h-6 w-[1px] bg-slate-200 mx-2"></div>
 
             {user ? (
-              <Link to="/admin" className="bg-royalGold text-white px-6 py-2 rounded-xl hover:bg-amber-600 transition-all font-bold text-xs uppercase tracking-widest shadow-md">
+              <Link to="/admin" className="bg-royalGold text-white px-5 py-2 rounded-lg hover:bg-amber-600 transition-all font-bold text-[10px] uppercase tracking-widest shadow-sm">
                 Dashboard
               </Link>
             ) : (
-              <Link to="/login" className="text-royalGreen hover:text-green-800 font-bold text-xs uppercase tracking-widest flex items-center">
+              <Link to="/login" className="text-royalGreen hover:text-green-800 font-bold text-[10px] uppercase tracking-widest flex items-center">
                 <i className="fa-solid fa-user-lock mr-2"></i> Login
               </Link>
             )}
@@ -65,7 +64,7 @@ const Navbar: React.FC<NavbarProps> = ({ user }) => {
           <div className="lg:hidden flex items-center">
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="inline-flex items-center justify-center p-2 rounded-md text-slate-400 hover:text-royalGreen hover:bg-slate-100 focus:outline-none"
+              className="inline-flex items-center justify-center p-2 rounded-md text-slate-400 hover:text-royalGreen"
             >
               <i className={`fa-solid ${isOpen ? 'fa-xmark' : 'fa-bars'} text-xl`}></i>
             </button>
@@ -73,19 +72,18 @@ const Navbar: React.FC<NavbarProps> = ({ user }) => {
         </div>
       </div>
 
-      {/* Mobile menu */}
       {isOpen && (
-        <div className="lg:hidden bg-white border-t border-slate-100 animate-in slide-in-from-top-4 duration-300 shadow-xl">
-          <div className="px-4 pt-4 pb-6 space-y-2">
-            <Link to="/" onClick={() => setIsOpen(false)} className={`block px-3 py-3 text-base font-bold rounded-xl ${isActive('/') ? 'bg-royalGreen text-white' : 'text-slate-700'}`}>Home</Link>
-            <Link to="/listings" onClick={() => setIsOpen(false)} className={`block px-3 py-3 text-base font-bold rounded-xl ${isActive('/listings') ? 'bg-royalGreen text-white' : 'text-slate-700'}`}>Projects</Link>
-            <Link to="/services" onClick={() => setIsOpen(false)} className={`block px-3 py-3 text-base font-bold rounded-xl ${isActive('/services') ? 'bg-royalGreen text-white' : 'text-slate-700'}`}>Services</Link>
-            <Link to="/contact" onClick={() => setIsOpen(false)} className={`block px-3 py-3 text-base font-bold rounded-xl ${isActive('/contact') ? 'bg-royalGreen text-white' : 'text-slate-700'}`}>Contact Us</Link>
+        <div className="lg:hidden bg-white border-t border-slate-100 shadow-xl">
+          <div className="px-4 pt-2 pb-6 space-y-1">
+            <Link to="/" onClick={() => setIsOpen(false)} className={`block px-3 py-3 text-sm font-bold rounded-lg ${isActive('/') ? 'bg-royalGreen text-white' : 'text-slate-700'}`}>Home</Link>
+            <Link to="/listings" onClick={() => setIsOpen(false)} className={`block px-3 py-3 text-sm font-bold rounded-lg ${isActive('/listings') ? 'bg-royalGreen text-white' : 'text-slate-700'}`}>Projects</Link>
+            <Link to="/services" onClick={() => setIsOpen(false)} className={`block px-3 py-3 text-sm font-bold rounded-lg ${isActive('/services') ? 'bg-royalGreen text-white' : 'text-slate-700'}`}>Services</Link>
+            <Link to="/contact" onClick={() => setIsOpen(false)} className={`block px-3 py-3 text-sm font-bold rounded-lg ${isActive('/contact') ? 'bg-royalGreen text-white' : 'text-slate-700'}`}>Contact Us</Link>
             <div className="pt-2">
               {user ? (
-                <Link to="/admin" onClick={() => setIsOpen(false)} className="block px-4 py-4 text-center text-base font-bold text-white bg-royalGold rounded-xl">Dashboard</Link>
+                <Link to="/admin" onClick={() => setIsOpen(false)} className="block px-4 py-3 text-center text-sm font-bold text-white bg-royalGold rounded-lg">Dashboard</Link>
               ) : (
-                <Link to="/login" onClick={() => setIsOpen(false)} className="block px-4 py-4 text-center text-base font-bold text-white bg-royalGreen rounded-xl shadow-lg">Agent Login</Link>
+                <Link to="/login" onClick={() => setIsOpen(false)} className="block px-4 py-3 text-center text-sm font-bold text-white bg-royalGreen rounded-lg">Login</Link>
               )}
             </div>
           </div>
