@@ -16,11 +16,13 @@ export const SITE_CONFIG = {
     whatsapp: "https://wa.me/8801769051777"
   },
   areas: [
-    "Dhaka Cantonment Area",
-    "Bashundhara Residential Area",
-    "Trust Green City (Mirpur DOHS)",
-    "Khilkhet-Nikunja",
-    "Mirpur-Dhanmondi"
+    { name: "Dhaka Cantonment Area", image: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?q=80&w=800" },
+    { name: "Bashundhara Residential Area", image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=800" },
+    { name: "Purbachal", image: "https://images.unsplash.com/photo-1600607687940-c52af096999c?q=80&w=800" },
+    { name: "Ashulia Model Town", image: "https://images.unsplash.com/photo-1600566753376-12c8ab7fb75b?q=80&w=800" },
+    { name: "Trust Green City (Mirpur DOHS)", image: "https://images.unsplash.com/photo-1600573472591-ee6b68d14c68?q=80&w=800" },
+    { name: "Khilkhet-Nikunja", image: "https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?q=80&w=800" },
+    { name: "Mirpur-Dhanmondi", image: "https://images.unsplash.com/photo-1600585154526-990dcea4d4d9?q=80&w=800" }
   ],
   priceRanges: [
     { label: "Under 40 Lac", min: 0, max: 4000000 },
