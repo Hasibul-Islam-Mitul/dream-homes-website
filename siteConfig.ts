@@ -2,7 +2,7 @@
 export const SITE_CONFIG = {
   name: "The Dream Homes & Constructions",
   tagline: "DREAM . BUILD . LIVE",
-  logo: "https://scontent.fdac5-2.fna.fbcdn.net/v/t39.30808-6/631228276_122166060272926895_3967650468832997147_n.jpg?_nc_cat=101&ccb=1-7&_nc_sid=a5f93a&_nc_ohc=ca3LgfUU7DYQ7kNvwG3grmp&_nc_ohc=ca3LgfUU7DYQ7kNvwG3grmp&_nc_oc=AdnIWpUzf2GZqcezvPpHoP6KR4Ks8ZeYlYUW44GewYgmyjz4X4Zod4ZR0DKuCBVKtHY&_nc_zt=23&_nc_ht=scontent.fdac5-2.fna&_nc_gid=OewRBGvglMENgdS6BrOFBA&oh=00_AfuGlgF0lcI868Kv-GKPG1L0i_hSKLq-9zbRMIuFUwv30g&oe=69956C47",
+  logo: "https://i.postimg.cc/VsMt2yzf/logo-(5).jpg",
   favicon: "https://i.postimg.cc/VsMt2yzf/logo-(5).jpg",
   phone: "+880 1769-051777",
   email: "official.mehedihasanrabbi@gmail.com",
@@ -18,11 +18,11 @@ export const SITE_CONFIG = {
   areas: [
     { name: "Dhaka Cantonment Area", image: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?q=80&w=800" },
     { name: "Bashundhara Residential Area", image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=800" },
-    { name: "Purbachal", image: "https://images.unsplash.com/photo-1600607687940-c52af096999c?q=80&w=800" },
+    { name: "Purbachal", image: "https://i.ytimg.com/vi/DO88ujjFrg4/maxresdefault.jpg" },
     { name: "Ashulia Model Town", image: "https://images.unsplash.com/photo-1600566753376-12c8ab7fb75b?q=80&w=800" },
     { name: "Trust Green City (Mirpur DOHS)", image: "https://images.unsplash.com/photo-1600573472591-ee6b68d14c68?q=80&w=800" },
     { name: "Khilkhet-Nikunja", image: "https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?q=80&w=800" },
-    { name: "Mirpur-Dhanmondi", image: "https://images.unsplash.com/photo-1600585154526-990dcea4d4d9?q=80&w=800" }
+    { name: "Mirpur-Dhanmondi", image: "https://propertyguide-store.s3.ap-southeast-1.amazonaws.com/bikroy/Mirpur_Dhaka_93181f438d.jpg" }
   ],
   priceRanges: [
     { label: "Under 40 Lac", min: 0, max: 4000000 },
