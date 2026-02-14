@@ -16,14 +16,14 @@ export const SITE_CONFIG = {
     whatsapp: "https://wa.me/8801769051777"
   },
   areas: [
-    { name: "Dhaka Cantonment Area", image: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?q=80&w=800" },
+    { name: "Dhaka Cantonment Area", image: "https://upload.wikimedia.org/wikipedia/commons/0/0a/Dhaka_Cantonment_%2825967499904%29.jpg" },
     { name: "Bashundhara Residential Area", image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=800" },
     { name: "Purbachal", image: "https://i.ytimg.com/vi/DO88ujjFrg4/maxresdefault.jpg" },
-    { name: "Ashulia Model Town", image: "https://images.unsplash.com/photo-1600566753376-12c8ab7fb75b?q=80&w=800" },
-    { name: "Trust Green City (Mirpur DOHS)", image: "https://images.unsplash.com/photo-1600573472591-ee6b68d14c68?q=80&w=800" },
+    { name: "Ashulia Model Town", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/61/Pallabi%2C_Mirpur_Dhaka4.jpg/760px-Mapcarta.jpg" },
+    { name: "Trust Green City (Mirpur DOHS)", image: "https://www.tbsnews.net/sites/default/files/styles/infograph/public/images/2020/12/05/trust_green_city_0.jpg" },
     { name: "Khilkhet-Nikunja", image: "https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?q=80&w=800" },
     { name: "Mirpur-Dhanmondi", image: "https://propertyguide-store.s3.ap-southeast-1.amazonaws.com/bikroy/Mirpur_Dhaka_93181f438d.jpg" },
-    { name: "Shagupta Residential Area", image: "https://propertyguide-store.s3.ap-southeast-1.amazonaws.com/bikroy/Mirpur_Dhaka_93181f438d.jpg" }
+    { name: "Shagupta Residential Area", image: "https://today.thefinancialexpress.com.bd/uploads/1753810362.jpg" }
   ],
   priceRanges: [
     { label: "Under 40 Lac", min: 0, max: 4000000 },
