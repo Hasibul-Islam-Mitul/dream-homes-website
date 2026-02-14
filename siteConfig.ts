@@ -22,7 +22,8 @@ export const SITE_CONFIG = {
     { name: "Ashulia Model Town", image: "https://images.unsplash.com/photo-1600566753376-12c8ab7fb75b?q=80&w=800" },
     { name: "Trust Green City (Mirpur DOHS)", image: "https://images.unsplash.com/photo-1600573472591-ee6b68d14c68?q=80&w=800" },
     { name: "Khilkhet-Nikunja", image: "https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?q=80&w=800" },
-    { name: "Mirpur-Dhanmondi", image: "https://propertyguide-store.s3.ap-southeast-1.amazonaws.com/bikroy/Mirpur_Dhaka_93181f438d.jpg" }
+    { name: "Mirpur-Dhanmondi", image: "https://propertyguide-store.s3.ap-southeast-1.amazonaws.com/bikroy/Mirpur_Dhaka_93181f438d.jpg" },
+    { name: "Shagupta Residential Area", image: "https://propertyguide-store.s3.ap-southeast-1.amazonaws.com/bikroy/Mirpur_Dhaka_93181f438d.jpg" }
   ],
   priceRanges: [
     { label: "Under 40 Lac", min: 0, max: 4000000 },

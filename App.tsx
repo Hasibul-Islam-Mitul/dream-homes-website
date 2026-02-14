@@ -2,13 +2,14 @@
 import React, { useEffect, useState } from 'react';
 import { HashRouter as Router, Routes, Route, Link, Navigate } from 'react-router-dom';
 import Navbar from './components/Navbar';
-import ChatAssistant from './components/ChatAssistant';
+import ActionHub from './components/ActionHub';
 import Home from './pages/Home';
 import Listings from './pages/Listings';
 import PropertyDetails from './pages/PropertyDetails';
 import AdminLogin from './pages/AdminLogin';
 import AdminDashboard from './pages/AdminDashboard';
 import Services from './pages/Services';
+import Activities from './pages/Activities';
 import Contact from './pages/Contact';
 import ProtectedRoute from './components/ProtectedRoute';
 import { auth } from './firebase';
@@ -53,7 +54,7 @@ const Footer = () => (
           <ul className="space-y-4 text-sm font-light">
             <li><Link to="/services" className="hover:text-royalGold transition-colors">Our Services</Link></li>
             <li><Link to="/listings" className="hover:text-royalGold transition-colors">Projects Portfolio</Link></li>
-            <li><a href="#" className="hover:text-royalGold transition-colors">Terms of Service</a></li>
+            <li><Link to="/activities" className="hover:text-royalGold transition-colors">Our Activities</Link></li>
             <li><Link to="/login" className="hover:text-royalGold transition-colors">Agent Admin Access</Link></li>
           </ul>
         </div>
@@ -110,14 +111,12 @@ const App = () => {
             <Route path="/listings" element={<Listings />} />
             <Route path="/property/:id" element={<PropertyDetails />} />
             <Route path="/services" element={<Services />} />
+            <Route path="/activities" element={<Activities />} />
             <Route path="/contact" element={<Contact />} />
-            
-            {/* If logged in, /login redirects to /admin */}
             <Route 
               path="/login" 
               element={user ? <Navigate to="/admin" replace /> : <AdminLogin />} 
             />
-            
             <Route 
               path="/admin" 
               element={
@@ -129,7 +128,7 @@ const App = () => {
           </Routes>
         </main>
         <Footer />
-        <ChatAssistant />
+        <ActionHub />
       </div>
     </Router>
   );

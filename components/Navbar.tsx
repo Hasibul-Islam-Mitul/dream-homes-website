@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { SITE_CONFIG } from '../siteConfig';
@@ -68,6 +69,7 @@ const Navbar: React.FC<NavbarProps> = ({ user }) => {
             <NavLink to="/" active={isActive('/')}>Home</NavLink>
             <NavLink to="/listings" active={isActive('/listings')}>Projects</NavLink>
             <NavLink to="/services" active={isActive('/services')}>Services</NavLink>
+            <NavLink to="/activities" active={isActive('/activities')}>Activities</NavLink>
             <NavLink to="/contact" active={isActive('/contact')}>Contact Us</NavLink>
             
             <div className={`h-6 w-[1px] mx-2 ${isTransparent ? 'bg-white/20' : 'bg-slate-200'}`}></div>
@@ -100,6 +102,7 @@ const Navbar: React.FC<NavbarProps> = ({ user }) => {
             <Link to="/" onClick={() => setIsOpen(false)} className={`block px-3 py-3 text-sm font-bold rounded-lg ${isActive('/') ? 'bg-royalGreen text-white' : 'text-slate-700'}`}>Home</Link>
             <Link to="/listings" onClick={() => setIsOpen(false)} className={`block px-3 py-3 text-sm font-bold rounded-lg ${isActive('/listings') ? 'bg-royalGreen text-white' : 'text-slate-700'}`}>Projects</Link>
             <Link to="/services" onClick={() => setIsOpen(false)} className={`block px-3 py-3 text-sm font-bold rounded-lg ${isActive('/services') ? 'bg-royalGreen text-white' : 'text-slate-700'}`}>Services</Link>
+            <Link to="/activities" onClick={() => setIsOpen(false)} className={`block px-3 py-3 text-sm font-bold rounded-lg ${isActive('/activities') ? 'bg-royalGreen text-white' : 'text-slate-700'}`}>Activities</Link>
             <Link to="/contact" onClick={() => setIsOpen(false)} className={`block px-3 py-3 text-sm font-bold rounded-lg ${isActive('/contact') ? 'bg-royalGreen text-white' : 'text-slate-700'}`}>Contact Us</Link>
             <div className="pt-2">
               {user ? (

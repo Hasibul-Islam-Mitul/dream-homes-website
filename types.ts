@@ -1,3 +1,4 @@
+
 export interface Property {
   id: string;
   title: string;
@@ -10,7 +11,20 @@ export interface Property {
   baths?: number;
   sqft: number;
   image: string;
+  image2?: string;
+  image3?: string;
+  brochure?: string;
+  features?: string;
   description: string;
+}
+
+export interface Activity {
+  id: string;
+  title: string;
+  description: string;
+  imageUrl: string;
+  category: 'Gallery' | 'Blog';
+  createdAt: any;
 }
 
 export interface Service {

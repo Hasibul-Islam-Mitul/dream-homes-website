@@ -38,14 +38,11 @@ const Listings: React.FC = () => {
     fetchProperties();
   }, []);
 
-  // Helper to parse price strings into numeric values for smart filtering
   const parsePrice = (priceStr: string | undefined): number => {
     if (!priceStr) return 0;
     const clean = priceStr.toLowerCase().replace(/[৳,]/g, '').trim();
-    
-    // Check for ranges like "1.2 Crore - 2 Crore"
     const parts = clean.split('-');
-    const target = parts[0].trim(); // Filter by the starting price
+    const target = parts[0].trim();
     
     let value = parseFloat(target);
     if (target.includes('crore')) value *= 10000000;
@@ -72,7 +69,7 @@ const Listings: React.FC = () => {
   });
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-32 min-h-screen">
       <div className="mb-12">
         <h1 className="text-5xl font-bold text-slate-900 mb-4 tracking-tighter uppercase">Project Collection</h1>
         <p className="text-slate-500 max-w-2xl text-lg font-medium">
@@ -80,10 +77,8 @@ const Listings: React.FC = () => {
         </p>
       </div>
 
-      {/* Advanced Filters Container */}
       <div className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-xl mb-12 space-y-8">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {/* Area Selection */}
           <div className="space-y-3">
             <label className="text-xs font-bold text-royalGold uppercase tracking-widest ml-1">Preferred Location</label>
             <select 
@@ -93,12 +88,11 @@ const Listings: React.FC = () => {
             >
               <option value="All">All Locations</option>
               {SITE_CONFIG.areas.map(area => (
-                <option key={area} value={area}>{area}</option>
+                <option key={area.name} value={area.name}>{area.name}</option>
               ))}
             </select>
           </div>
 
-          {/* Price Range Selection */}
           <div className="space-y-3">
             <label className="text-xs font-bold text-royalGold uppercase tracking-widest ml-1">Budget Range (BDT)</label>
             <select 
@@ -113,7 +107,6 @@ const Listings: React.FC = () => {
             </select>
           </div>
 
-          {/* Property Type Selection */}
           <div className="space-y-3">
             <label className="text-xs font-bold text-royalGold uppercase tracking-widest ml-1">Property Type</label>
             <div className="flex bg-slate-50 rounded-2xl p-1 shadow-inner">
