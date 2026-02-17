@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { SITE_CONFIG } from '../siteConfig';
 
 const AdminDashboard = () => {
-  const [activeTab, setActiveTab] = useState<'projects' | 'leads' | 'activities'>('projects');
+  const [activeTab, setActiveTab] = useState<'projects' | 'leads' | 'activities' | 'archive'>('projects');
   const [projects, setProjects] = useState<any[]>([]);
   const [leads, setLeads] = useState<any[]>([]);
   const [activities, setActivities] = useState<any[]>([]);
@@ -37,9 +37,18 @@ const AdminDashboard = () => {
   const fetchData = async () => {
     setLoading(true);
     try {
-      if (activeTab === 'projects') {
+      if (activeTab === 'projects' || activeTab === 'archive') {
+        // Recovery logic: pulling all projects to ensure none are accidentally lost
         const snapshot = await db.collection("projects").orderBy("createdAt", "desc").get();
-        setProjects(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+        const allProjects = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        
+        if (activeTab === 'projects') {
+          // Display only non-archived items
+          setProjects(allProjects.filter(p => !p.isArchived));
+        } else {
+          // Display only archived items
+          setProjects(allProjects.filter(p => p.isArchived));
+        }
       } else if (activeTab === 'leads') {
         const snapshot = await db.collection("leads").orderBy("timestamp", "desc").get();
         setLeads(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
@@ -68,7 +77,8 @@ const AdminDashboard = () => {
         beds: projectFormData.beds ? parseInt(projectFormData.beds) : null,
         baths: projectFormData.baths ? parseInt(projectFormData.baths) : null,
         sqft: projectFormData.sqft ? parseInt(projectFormData.sqft) : 0,
-        updatedAt: firebase.firestore.Timestamp.now()
+        updatedAt: firebase.firestore.Timestamp.now(),
+        isArchived: false // Ensure new/updated projects are visible
       };
 
       if (editingProjectId) {
@@ -96,8 +106,18 @@ const AdminDashboard = () => {
     }
   };
 
-  const handleDeleteProject = async (id: string) => {
-    if (window.confirm("Are you sure you want to delete this project?")) {
+  // Archive Logic: Non-destructive
+  const handleArchiveProject = async (id: string, archive: boolean = true) => {
+    const msg = archive ? "Move this project to Archive?" : "Restore this project from Archive?";
+    if (window.confirm(msg)) {
+      await db.collection("projects").doc(id).update({ isArchived: archive });
+      fetchData();
+    }
+  };
+
+  // Permanent Delete: With confirmation guard
+  const handlePermanentDelete = async (id: string) => {
+    if (window.confirm("CRITICAL ACTION: Are you absolutely sure you want to PERMANENTLY delete this project? This cannot be undone.")) {
       await db.collection("projects").doc(id).delete();
       fetchData();
     }
@@ -184,6 +204,15 @@ const AdminDashboard = () => {
     </div>
   );
 
+  const NavTab = ({ id, label }: { id: typeof activeTab, label: string }) => (
+    <button 
+      onClick={() => setActiveTab(id)} 
+      className={`text-[10px] font-bold uppercase tracking-widest transition-colors ${activeTab === id ? 'text-royalGreen border-b-2 border-royalGreen' : 'text-slate-400 hover:text-slate-600'}`}
+    >
+      {label}
+    </button>
+  );
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-32">
       <div className="flex justify-between items-center mb-10 border-b pb-6">
@@ -192,29 +221,36 @@ const AdminDashboard = () => {
           <p className="text-slate-500 text-[10px] font-bold tracking-widest uppercase">Inventory Control Center</p>
         </div>
         <div className="flex items-center space-x-6">
-          <button onClick={() => setActiveTab('projects')} className={`text-[10px] font-bold uppercase tracking-widest transition-colors ${activeTab === 'projects' ? 'text-royalGreen' : 'text-slate-400 hover:text-slate-600'}`}>Inventory</button>
-          <button onClick={() => setActiveTab('activities')} className={`text-[10px] font-bold uppercase tracking-widest transition-colors ${activeTab === 'activities' ? 'text-royalGreen' : 'text-slate-400 hover:text-slate-600'}`}>Activities</button>
-          <button onClick={() => setActiveTab('leads')} className={`text-[10px] font-bold uppercase tracking-widest transition-colors ${activeTab === 'leads' ? 'text-royalGreen' : 'text-slate-400 hover:text-slate-600'}`}>Leads</button>
+          <NavTab id="projects" label="Inventory" />
+          <NavTab id="activities" label="Activities" />
+          <NavTab id="leads" label="Leads" />
+          <NavTab id="archive" label="Archive" />
           <button onClick={handleLogout} className="text-red-500 text-[10px] font-bold uppercase tracking-widest border border-red-100 px-4 py-2 rounded-lg hover:bg-red-50 transition-all">Logout</button>
         </div>
       </div>
 
-      {activeTab === 'projects' && (
+      {(activeTab === 'projects' || activeTab === 'archive') && (
         <div className="space-y-8 animate-in fade-in duration-500">
           <div className="flex justify-between items-center bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
             <div>
-              <h2 className="text-lg font-bold uppercase tracking-tight">{editingProjectId ? 'Modify Project' : 'Inventory Management'}</h2>
-              <p className="text-xs text-slate-400 italic">Manage plots, luxury homes, and construction units.</p>
+              <h2 className="text-lg font-bold uppercase tracking-tight">
+                {activeTab === 'archive' ? 'Archived Inventory' : (editingProjectId ? 'Modify Project' : 'Inventory Management')}
+              </h2>
+              <p className="text-xs text-slate-400 italic">
+                {activeTab === 'archive' ? 'Hidden from public view.' : 'Manage plots, luxury homes, and construction units.'}
+              </p>
             </div>
-            <button 
-              onClick={() => { setIsAddingProject(!isAddingProject); if(isAddingProject) setEditingProjectId(null); }}
-              className={`${isAddingProject ? 'bg-slate-200 text-slate-700' : 'bg-royalGreen text-white'} px-6 py-2.5 rounded-xl font-bold text-[10px] uppercase tracking-widest transition-all shadow-md`}
-            >
-              {isAddingProject ? 'Close Editor' : 'Add New Listing'}
-            </button>
+            {activeTab === 'projects' && (
+              <button 
+                onClick={() => { setIsAddingProject(!isAddingProject); if(isAddingProject) setEditingProjectId(null); }}
+                className={`${isAddingProject ? 'bg-slate-200 text-slate-700' : 'bg-royalGreen text-white'} px-6 py-2.5 rounded-xl font-bold text-[10px] uppercase tracking-widest transition-all shadow-md`}
+              >
+                {isAddingProject ? 'Close Editor' : 'Add New Listing'}
+              </button>
+            )}
           </div>
 
-          {isAddingProject && (
+          {isAddingProject && activeTab === 'projects' && (
             <form onSubmit={handleProjectSubmit} className="bg-white p-10 rounded-[3rem] border border-slate-100 shadow-2xl space-y-8">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 <div className="md:col-span-2 space-y-1">
@@ -298,7 +334,7 @@ const AdminDashboard = () => {
               <div className="pt-6">
                 <button type="submit" disabled={loading} className="w-full bg-royalGreen text-white font-bold py-5 rounded-[2rem] shadow-2xl uppercase tracking-[0.2em] text-[11px] hover:bg-green-800 disabled:opacity-50 transition-all flex items-center justify-center">
                   {loading ? (
-                    <><i className="fa-solid fa-spinner fa-spin mr-3"></i> Syncing to Firestore...</>
+                    <><i className="fa-solid fa-spinner fa-spin mr-3"></i> Syncing...</>
                   ) : editingProjectId ? (
                     <><i className="fa-solid fa-cloud-arrow-up mr-3"></i> Update Project Info</>
                   ) : (
@@ -338,11 +374,27 @@ const AdminDashboard = () => {
                       </span>
                     </td>
                     <td className="px-8 py-5 text-right space-x-6 uppercase font-bold text-[10px] tracking-widest">
-                      <button onClick={() => handleEditProject(p)} className="text-royalGreen hover:text-green-900">Modify</button>
-                      <button onClick={() => handleDeleteProject(p.id)} className="text-red-400 hover:text-red-600">Archive</button>
+                      {activeTab === 'projects' ? (
+                        <>
+                          <button onClick={() => handleEditProject(p)} className="text-royalGreen hover:text-green-900">Modify</button>
+                          <button onClick={() => handleArchiveProject(p.id, true)} className="text-slate-400 hover:text-slate-600">Archive</button>
+                        </>
+                      ) : (
+                        <>
+                          <button onClick={() => handleArchiveProject(p.id, false)} className="text-royalGreen hover:text-green-900">Restore</button>
+                          <button onClick={() => handlePermanentDelete(p.id)} className="text-red-500 hover:text-red-700 font-bold">Delete</button>
+                        </>
+                      )}
                     </td>
                   </tr>
                 ))}
+                {projects.length === 0 && (
+                  <tr>
+                    <td colSpan={4} className="text-center py-20 text-slate-400 uppercase tracking-widest italic font-bold">
+                      No items found in this section
+                    </td>
+                  </tr>
+                )}
               </tbody>
             </table>
           </div>
@@ -427,7 +479,9 @@ const AdminDashboard = () => {
                   <div className="flex justify-between mb-4">
                     <div>
                       <h3 className="font-bold text-slate-900 text-lg uppercase tracking-tight">{lead.name}</h3>
-                      <p className="text-[10px] text-royalGold uppercase font-bold tracking-widest">Consultation Request</p>
+                      <p className="text-[10px] text-royalGold uppercase font-bold tracking-widest">
+                        {lead.source?.includes('Mail Modal') ? 'Action Hub Inquiry' : 'Consultation Request'}
+                      </p>
                     </div>
                     <span className="text-[9px] text-slate-300 uppercase font-bold bg-slate-50 px-3 py-1 rounded-full h-fit">
                       {lead.timestamp ? new Date(lead.timestamp?.toDate()).toLocaleDateString() : 'N/A'}
@@ -437,9 +491,16 @@ const AdminDashboard = () => {
                     <p className="text-xs text-slate-600 flex items-center">
                       <i className="fa-solid fa-envelope mr-3 text-royalGreen/30"></i> {lead.email}
                     </p>
-                    <p className="text-xs text-slate-600 flex items-center">
-                      <i className="fa-solid fa-phone mr-3 text-royalGreen/30"></i> {lead.phone || 'No phone provided'}
-                    </p>
+                    {lead.subject && (
+                      <p className="text-xs text-slate-600 flex items-center">
+                        <i className="fa-solid fa-bookmark mr-3 text-royalGreen/30"></i> {lead.subject}
+                      </p>
+                    )}
+                    {lead.phone && (
+                      <p className="text-xs text-slate-600 flex items-center">
+                        <i className="fa-solid fa-phone mr-3 text-royalGreen/30"></i> {lead.phone}
+                      </p>
+                    )}
                   </div>
                   <div className="bg-slate-50 p-5 rounded-2xl italic text-slate-500 text-sm border border-slate-100">
                     "{lead.message}"
