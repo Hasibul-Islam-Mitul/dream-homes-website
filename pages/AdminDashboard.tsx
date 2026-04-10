@@ -11,6 +11,7 @@ const AdminDashboard = () => {
   const [leads, setLeads] = useState<any[]>([]);
   const [activities, setActivities] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [fetchError, setFetchError] = useState<string | null>(null);
   
   // Project Form State
   const [isAddingProject, setIsAddingProject] = useState(false);
@@ -36,11 +37,19 @@ const AdminDashboard = () => {
 
   const fetchData = async () => {
     setLoading(true);
+    setFetchError(null);
     try {
       if (activeTab === 'projects' || activeTab === 'archive') {
         // Recovery logic: pulling all projects to ensure none are accidentally lost
-        const snapshot = await db.collection("projects").orderBy("createdAt", "desc").get();
+        const snapshot = await db.collection("properties").get();
         const allProjects = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        
+        // Sort in memory to handle documents without createdAt
+        allProjects.sort((a: any, b: any) => {
+          const dateA = a.createdAt?.toDate?.() || new Date(0);
+          const dateB = b.createdAt?.toDate?.() || new Date(0);
+          return dateB.getTime() - dateA.getTime();
+        });
         
         if (activeTab === 'projects') {
           // Display only non-archived items
@@ -56,8 +65,9 @@ const AdminDashboard = () => {
         const snapshot = await db.collection("activities").orderBy("createdAt", "desc").get();
         setActivities(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
       }
-    } catch (err) {
-      console.error("Error fetching data:", err);
+    } catch (err: any) {
+      console.error("CRITICAL: Error fetching data in Admin Dashboard:", err);
+      setFetchError(err.message || String(err));
     }
     setLoading(false);
   };
@@ -82,9 +92,9 @@ const AdminDashboard = () => {
       };
 
       if (editingProjectId) {
-        await db.collection("projects").doc(editingProjectId).update(data);
+        await db.collection("properties").doc(editingProjectId).update(data);
       } else {
-        await db.collection("projects").add({
+        await db.collection("properties").add({
           ...data,
           createdAt: firebase.firestore.Timestamp.now()
         });
@@ -110,7 +120,7 @@ const AdminDashboard = () => {
   const handleArchiveProject = async (id: string, archive: boolean = true) => {
     const msg = archive ? "Move this project to Archive?" : "Restore this project from Archive?";
     if (window.confirm(msg)) {
-      await db.collection("projects").doc(id).update({ isArchived: archive });
+      await db.collection("properties").doc(id).update({ isArchived: archive });
       fetchData();
     }
   };
@@ -118,7 +128,7 @@ const AdminDashboard = () => {
   // Permanent Delete: With confirmation guard
   const handlePermanentDelete = async (id: string) => {
     if (window.confirm("CRITICAL ACTION: Are you absolutely sure you want to PERMANENTLY delete this project? This cannot be undone.")) {
-      await db.collection("projects").doc(id).delete();
+      await db.collection("properties").doc(id).delete();
       fetchData();
     }
   };
@@ -228,6 +238,14 @@ const AdminDashboard = () => {
           <button onClick={handleLogout} className="text-red-500 text-[10px] font-bold uppercase tracking-widest border border-red-100 px-4 py-2 rounded-lg hover:bg-red-50 transition-all">Logout</button>
         </div>
       </div>
+
+      {fetchError && (
+        <div className="mb-10 bg-red-50 border border-red-100 p-6 rounded-2xl text-center">
+          <p className="text-red-900 font-bold mb-2 uppercase tracking-tight text-sm">Diagnostic Error: Database Access Denied</p>
+          <code className="text-[10px] bg-white p-3 rounded-xl border block mb-2 font-mono">Firebase Error: [{fetchError}]</code>
+          <p className="text-slate-400 text-[10px] font-bold uppercase tracking-widest">Check your Security Rules or API Key permissions.</p>
+        </div>
+      )}
 
       {(activeTab === 'projects' || activeTab === 'archive') && (
         <div className="space-y-8 animate-in fade-in duration-500">

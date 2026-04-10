@@ -1,0 +1,39 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return isAuthenticated() && 
+        (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin' ||
+         request.auth.token.email == "hasibul.islam.mitul@gmail.com");
+    }
+
+    // Properties collection
+    match /properties/{propertyId} {
+      allow read: if true; // Publicly readable
+      allow write: if isAdmin();
+    }
+
+    // Activities collection
+    match /activities/{activityId} {
+      allow read: if true; // Publicly readable
+      allow write: if isAdmin();
+    }
+
+    // Leads collection
+    match /leads/{leadId} {
+      allow create: if true; // Anyone can submit a lead
+      allow read, update, delete: if isAdmin();
+    }
+
+    // Users collection
+    match /users/{userId} {
+      allow read: if isAuthenticated() && (request.auth.uid == userId || isAdmin());
+      allow write: if isAdmin();
+    }
+  }
+}

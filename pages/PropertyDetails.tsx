@@ -9,28 +9,37 @@ const PropertyDetails = () => {
   const { id } = useParams<{ id: string }>();
   const [property, setProperty] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [fetchError, setFetchError] = useState<string | null>(null);
   const [activeImage, setActiveImage] = useState<string>('');
   const [inquiryStatus, setInquiryStatus] = useState<'idle' | 'sending' | 'success'>('idle');
 
   useEffect(() => {
     const fetchProperty = async () => {
       setLoading(true);
+      setFetchError(null);
       if (db && id) {
         try {
-          const doc = await db.collection("projects").doc(id).get();
+          const doc = await db.collection("properties").doc(id).get();
           if (doc.exists) {
             const data = { id: doc.id, ...doc.data() };
             setProperty(data);
             setActiveImage(data.image);
           } else {
+            console.log(`Firestore: Document with ID ${id} not found in 'properties'. Checking local constants.`);
             const local = PROPERTIES.find(p => p.id === id);
             if (local) {
               setProperty(local);
               setActiveImage(local.image);
             }
           }
-        } catch (err) {
-          console.error(err);
+        } catch (err: any) {
+          console.error("CRITICAL: Error fetching property details from Firebase:", err);
+          setFetchError(err.message || String(err));
+          const local = PROPERTIES.find(p => p.id === id);
+          if (local) {
+            setProperty(local);
+            setActiveImage(local.image);
+          }
         }
       } else {
         const local = PROPERTIES.find(p => p.id === id);
@@ -70,6 +79,22 @@ const PropertyDetails = () => {
   };
 
   if (loading) return <div className="py-24 text-center"><i className="fa-solid fa-spinner fa-spin text-4xl text-royalGreen"></i></div>;
+
+  if (fetchError) {
+    return (
+      <div className="max-w-7xl mx-auto px-4 py-32 text-center">
+        <div className="bg-red-50 p-12 rounded-[3rem] border-2 border-dashed border-red-100 max-w-2xl mx-auto">
+          <i className="fa-solid fa-circle-exclamation text-5xl text-red-600 mb-6"></i>
+          <h2 className="text-3xl font-bold text-red-900 mb-4 uppercase tracking-tight">Technical Error</h2>
+          <p className="text-red-700 font-mono text-sm bg-white p-4 rounded-2xl border border-red-200 mb-6">
+            Firebase Error: [{fetchError}]
+          </p>
+          <p className="text-slate-500 mb-8">We are attempting to load cached data for you.</p>
+          <Link to="/listings" className="bg-royalGreen text-white px-8 py-4 rounded-xl font-bold uppercase tracking-widest text-xs shadow-lg">Return to Listings</Link>
+        </div>
+      </div>
+    );
+  }
 
   if (!property) {
     return (

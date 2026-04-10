@@ -12,9 +12,11 @@ const Listings: React.FC = () => {
   
   const [properties, setProperties] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [fetchError, setFetchError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchProperties = async () => {
+      setFetchError(null);
       if (!isFirebaseConfigured) {
         setProperties(PROPERTIES);
         setLoading(false);
@@ -22,14 +24,23 @@ const Listings: React.FC = () => {
       }
 
       try {
-        const snapshot = await db.collection("projects").orderBy("createdAt", "desc").get();
+        const snapshot = await db.collection("properties").get();
         if (snapshot.empty) {
+          console.log("Firestore: 'properties' collection is empty.");
           setProperties(PROPERTIES);
         } else {
-          setProperties(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+          const fetchedProperties = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+          // Sort in memory to handle documents without createdAt
+          fetchedProperties.sort((a: any, b: any) => {
+            const dateA = a.createdAt?.toDate?.() || new Date(0);
+            const dateB = b.createdAt?.toDate?.() || new Date(0);
+            return dateB.getTime() - dateA.getTime();
+          });
+          setProperties(fetchedProperties);
         }
-      } catch (err) {
-        console.error("Error fetching properties from Firebase:", err);
+      } catch (err: any) {
+        console.error("CRITICAL: Error fetching properties from Firebase:", err);
+        setFetchError(err.message || String(err));
         setProperties(PROPERTIES);
       } finally {
         setLoading(false);
@@ -130,6 +141,23 @@ const Listings: React.FC = () => {
 
       {loading ? (
         <div className="flex justify-center py-20"><i className="fa-solid fa-spinner fa-spin text-4xl text-royalGreen"></i></div>
+      ) : fetchError ? (
+        <div className="text-center py-24 bg-red-50 rounded-[3rem] border-2 border-dashed border-red-100 shadow-sm">
+          <div className="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
+            <i className="fa-solid fa-triangle-exclamation text-3xl text-red-600"></i>
+          </div>
+          <h3 className="text-2xl font-bold text-red-900 mb-2">Database Connection Issue</h3>
+          <p className="text-red-600 max-w-md mx-auto font-mono text-sm p-4 bg-white rounded-xl border border-red-200">
+            Firebase Error: [{fetchError}]
+          </p>
+          <p className="text-slate-500 mt-4 text-sm">Showing demo data as fallback.</p>
+          <button 
+            onClick={() => window.location.reload()}
+            className="mt-8 bg-royalGreen text-white px-8 py-3 rounded-xl font-bold uppercase tracking-widest text-xs shadow-lg"
+          >
+            Retry Connection
+          </button>
+        </div>
       ) : filteredProperties.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {filteredProperties.map(property => (

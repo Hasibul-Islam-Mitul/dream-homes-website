@@ -10,11 +10,13 @@ import { SITE_CONFIG } from '../siteConfig';
 const Home: React.FC = () => {
   const [featuredProjects, setFeaturedProjects] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [fetchError, setFetchError] = useState<string | null>(null);
   const [leadForm, setLeadForm] = useState({ name: '', email: '', message: '' });
   const [formStatus, setFormStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle');
 
   useEffect(() => {
     const fetchProjects = async () => {
+      setFetchError(null);
       if (!isFirebaseConfigured || !db) {
         setFeaturedProjects(PROPERTIES.slice(0, 3));
         setLoading(false);
@@ -22,14 +24,23 @@ const Home: React.FC = () => {
       }
 
       try {
-        const snapshot = await db.collection("projects").orderBy("createdAt", "desc").limit(3).get();
+        const snapshot = await db.collection("properties").get();
         if (snapshot.empty) {
+          console.log("Firestore: 'properties' collection is empty.");
           setFeaturedProjects(PROPERTIES.slice(0, 3));
         } else {
-          setFeaturedProjects(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+          const fetchedProjects = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+          // Sort in memory to handle documents without createdAt
+          fetchedProjects.sort((a: any, b: any) => {
+            const dateA = a.createdAt?.toDate?.() || new Date(0);
+            const dateB = b.createdAt?.toDate?.() || new Date(0);
+            return dateB.getTime() - dateA.getTime();
+          });
+          setFeaturedProjects(fetchedProjects.slice(0, 3));
         }
-      } catch (err) {
-        console.error("Error fetching projects from Firebase:", err);
+      } catch (err: any) {
+        console.error("CRITICAL: Error fetching projects from Firebase:", err);
+        setFetchError(err.message || String(err));
         setFeaturedProjects(PROPERTIES.slice(0, 3)); 
       } finally {
         setLoading(false);
@@ -127,6 +138,12 @@ const Home: React.FC = () => {
         
         {loading ? (
           <div className="flex justify-center py-20"><i className="fa-solid fa-spinner fa-spin text-3xl text-royalGreen"></i></div>
+        ) : fetchError ? (
+          <div className="bg-red-50 p-8 rounded-[2rem] border border-red-100 text-center">
+            <p className="text-red-900 font-bold mb-2">Diagnostic Error: Failed to fetch inventory</p>
+            <code className="text-[10px] bg-white p-2 rounded border block mb-4">Firebase Error: [{fetchError}]</code>
+            <p className="text-slate-500 text-xs">Displaying fallback demo data.</p>
+          </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {featuredProjects.map(property => (
