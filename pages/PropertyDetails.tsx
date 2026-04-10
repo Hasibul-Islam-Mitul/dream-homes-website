@@ -148,12 +148,12 @@ const PropertyDetails = () => {
               </div>
             </div>
             
-            <p className="text-slate-500 flex items-center mb-10 text-lg">
+            <div className="text-slate-500 flex items-center mb-10 text-lg">
               <div className="w-10 h-10 bg-royalGreen/5 rounded-xl flex items-center justify-center mr-4">
                 <i className="fa-solid fa-location-dot text-royalGreen"></i>
               </div>
               {property.location}
-            </p>
+            </div>
             
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 p-8 bg-slate-50 rounded-[2rem] mb-12 shadow-inner">
               <div className="text-center">
