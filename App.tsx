@@ -1,6 +1,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { HashRouter as Router, Routes, Route, Link, Navigate } from 'react-router-dom';
+import { Analytics } from '@vercel/analytics/react';
 import Navbar from './components/Navbar';
 import ActionHub from './components/ActionHub';
 import Home from './pages/Home';
@@ -129,6 +130,7 @@ const App = () => {
         </main>
         <Footer />
         <ActionHub />
+        <Analytics />
       </div>
     </Router>
   );
