@@ -19,7 +19,7 @@ export const SITE_CONFIG = {
     { name: "Dhaka Cantonment Area", image: "https://upload.wikimedia.org/wikipedia/commons/0/0a/Dhaka_Cantonment_%2825967499904%29.jpg" },
     { name: "Bashundhara Residential Area", image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=800" },
     { name: "Purbachal", image: "https://i.ytimg.com/vi/DO88ujjFrg4/maxresdefault.jpg" },
-    { name: "Ashulia Model Town", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/61/Pallabi%2C_Mirpur_Dhaka4.jpg/760px-Mapcarta.jpg" },
+    { name: "Ashulia Model Town", image: "https://scontent-sin2-2.xx.fbcdn.net/v/t39.30808-6/496938799_3133871576778019_5088268908146732399_n.jpg?_nc_cat=103&ccb=1-7&_nc_sid=0327a3&_nc_eui2=AeE8Kpj4v2ux0iBjze1bHgB2uJk9_mlUxXO4mT3-aVTFcx7TLQh6MwPIPUEiPI2aDZOLArDsIfjqhrTQnTUhTyBS&_nc_ohc=V_ce-pOovCYQ7kNvwHVyE94&_nc_oc=AdpqF2rgZ-6ojW9iBuuRDj5Ez2HOvSWAMySrOxwAPfKTepczbJx5icBO6o9Kla2L6UPpSW3n1u4Mm-oVMKyZEB-H&_nc_zt=23&_nc_ht=scontent-sin2-2.xx&_nc_gid=59eVuIN2Ywp2NiD6-O_WNg&_nc_ss=792a8&oh=00_Af2ocugn-gPNLMSNPVWIEBpr5ZGWH_d2EQEwPZ4A_Bel3g&oe=69F25929" },
     { name: "Trust Green City (Mirpur DOHS)", image: "https://www.tbsnews.net/sites/default/files/styles/infograph/public/images/2020/12/05/trust_green_city_0.jpg" },
     { name: "Khilkhet-Nikunja", image: "https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?q=80&w=800" },
     { name: "Mirpur-Dhanmondi", image: "https://propertyguide-store.s3.ap-southeast-1.amazonaws.com/bikroy/Mirpur_Dhaka_93181f438d.jpg" },

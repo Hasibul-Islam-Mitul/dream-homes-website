@@ -247,6 +247,14 @@ const AdminDashboard = () => {
         </div>
       )}
 
+      {fetchError && (
+        <div className="mb-10 bg-red-50 border border-red-100 p-6 rounded-2xl text-center">
+          <p className="text-red-900 font-bold mb-2 uppercase tracking-tight text-sm">Diagnostic Error: Database Access Denied</p>
+          <code className="text-[10px] bg-white p-3 rounded-xl border block mb-2 font-mono">Firebase Error: [{fetchError}]</code>
+          <p className="text-slate-400 text-[10px] font-bold uppercase tracking-widest">Check your Security Rules or API Key permissions.</p>
+        </div>
+      )}
+
       {(activeTab === 'projects' || activeTab === 'archive') && (
         <div className="space-y-8 animate-in fade-in duration-500">
           <div className="flex justify-between items-center bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
