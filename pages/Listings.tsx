@@ -24,9 +24,9 @@ const Listings: React.FC = () => {
       }
 
       try {
-        const snapshot = await db.collection("properties").get();
+        const snapshot = await db.collection("projects").get();
         if (snapshot.empty) {
-          console.log("Firestore: 'properties' collection is empty.");
+          console.log("Firestore: 'projects' collection is empty.");
           setProperties(PROPERTIES);
         } else {
           const fetchedProperties = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
