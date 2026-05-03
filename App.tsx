@@ -83,13 +83,23 @@ const App = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // Safety fallback: if auth doesn't respond in 5 seconds, proceed anyway
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 5000);
+
     if (auth) {
       const unsubscribe = onAuthStateChanged(auth, (u: any) => {
+        clearTimeout(timer);
         setUser(u);
         setLoading(false);
       });
-      return () => unsubscribe();
+      return () => {
+        unsubscribe();
+        clearTimeout(timer);
+      };
     } else {
+      clearTimeout(timer);
       setLoading(false);
     }
   }, []);

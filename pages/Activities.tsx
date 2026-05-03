@@ -8,17 +8,20 @@ const Activities: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'Gallery' | 'Blog'>('Gallery');
   const [activities, setActivities] = useState<Activity[]>([]);
   const [loading, setLoading] = useState(true);
+  const [fetchError, setFetchError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchActivities = async () => {
       setLoading(true);
+      setFetchError(null);
       if (db) {
         try {
           const q = query(collection(db, "activities"), orderBy("createdAt", "desc"));
           const snapshot = await getDocs(q);
           setActivities(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as Activity[]);
-        } catch (err) {
+        } catch (err: any) {
           console.error("Error fetching activities:", err);
+          setFetchError(err.message || String(err));
         } finally {
           setLoading(false);
         }
@@ -63,6 +66,12 @@ const Activities: React.FC = () => {
         {loading ? (
           <div className="flex justify-center py-24">
             <i className="fa-solid fa-spinner fa-spin text-4xl text-royalGreen"></i>
+          </div>
+        ) : fetchError ? (
+          <div className="bg-red-50 p-8 rounded-[2rem] border border-red-100 text-center max-w-2xl mx-auto">
+            <p className="text-red-900 font-bold mb-2 uppercase tracking-tight text-sm">Diagnostic Error: Failed to fetch activities</p>
+            <code className="text-[10px] bg-white p-3 rounded-xl border block mb-2 font-mono">Firebase Error: [{fetchError}]</code>
+            <p className="text-slate-400 text-[10px] font-bold uppercase tracking-widest">Check your Security Rules or API Key permissions.</p>
           </div>
         ) : filtered.length > 0 ? (
           activeTab === 'Gallery' ? (

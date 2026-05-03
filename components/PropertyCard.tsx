@@ -52,7 +52,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({ property }) => {
             )}
             <span className="flex items-center">
               <i className="fa-solid fa-vector-square mr-2 text-royalGreen/40"></i>
-              {property.sqft.toLocaleString()} sqft
+              {property.sqft ? property.sqft.toLocaleString() : 'N/A'} sqft
             </span>
           </div>
         </div>
