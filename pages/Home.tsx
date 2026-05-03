@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { SERVICES, PROPERTIES } from '../constants'; 
 import PropertyCard from '../components/PropertyCard';
 import { db, isFirebaseConfigured } from '../firebase';
-import firebase from 'firebase/compat/app';
+import { collection, getDocs, addDoc, serverTimestamp, query, limit } from 'firebase/firestore';
 import { SITE_CONFIG } from '../siteConfig';
 
 const Home: React.FC = () => {
@@ -24,9 +24,9 @@ const Home: React.FC = () => {
       }
 
       try {
-        const snapshot = await db.collection("properties").get();
+        const snapshot = await getDocs(collection(db, "projects"));
         if (snapshot.empty) {
-          console.log("Firestore: 'properties' collection is empty.");
+          console.log("Firestore: 'projects' collection is empty.");
           setFeaturedProjects(PROPERTIES.slice(0, 3));
         } else {
           const fetchedProjects = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
@@ -36,7 +36,9 @@ const Home: React.FC = () => {
             const dateB = b.createdAt?.toDate?.() || new Date(0);
             return dateB.getTime() - dateA.getTime();
           });
-          setFeaturedProjects(fetchedProjects.slice(0, 3));
+          // Filter out archived projects (default to showing if field is missing)
+          const visibleProjects = fetchedProjects.filter(p => p.isArchived !== true);
+          setFeaturedProjects(visibleProjects.slice(0, 3));
         }
       } catch (err: any) {
         console.error("CRITICAL: Error fetching projects from Firebase:", err);
@@ -58,9 +60,9 @@ const Home: React.FC = () => {
 
     setFormStatus('sending');
     try {
-      await db.collection("leads").add({
+      await addDoc(collection(db, "leads"), {
         ...leadForm,
-        timestamp: firebase.firestore.Timestamp.now(),
+        timestamp: serverTimestamp(),
         source: 'Home Callback Form'
       });
       setFormStatus('success');

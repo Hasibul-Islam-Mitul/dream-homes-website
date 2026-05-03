@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import PropertyCard from '../components/PropertyCard';
 import { PROPERTIES } from '../constants';
 import { db, isFirebaseConfigured } from '../firebase';
+import { collection, getDocs } from 'firebase/firestore';
 import { SITE_CONFIG } from '../siteConfig';
 
 const Listings: React.FC = () => {
@@ -10,43 +11,43 @@ const Listings: React.FC = () => {
   const [priceRangeFilter, setPriceRangeFilter] = useState<string>('All');
   const [typeFilter, setTypeFilter] = useState<'All' | 'Residential' | 'Commercial' | 'Land'>('All');
   
-  const [properties, setProperties] = useState<any[]>([]);
+  const [projects, setProjects] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [fetchError, setFetchError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchProperties = async () => {
+    const fetchProjects = async () => {
       setFetchError(null);
-      if (!isFirebaseConfigured) {
-        setProperties(PROPERTIES);
+      if (!isFirebaseConfigured || !db) {
+        setProjects(PROPERTIES);
         setLoading(false);
         return;
       }
 
       try {
-        const snapshot = await db.collection("projects").get();
+        const snapshot = await getDocs(collection(db, "projects"));
         if (snapshot.empty) {
           console.log("Firestore: 'projects' collection is empty.");
-          setProperties(PROPERTIES);
+          setProjects(PROPERTIES);
         } else {
-          const fetchedProperties = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+          const fetchedProjects = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
           // Sort in memory to handle documents without createdAt
-          fetchedProperties.sort((a: any, b: any) => {
+          fetchedProjects.sort((a: any, b: any) => {
             const dateA = a.createdAt?.toDate?.() || new Date(0);
             const dateB = b.createdAt?.toDate?.() || new Date(0);
             return dateB.getTime() - dateA.getTime();
           });
-          setProperties(fetchedProperties);
+          setProjects(fetchedProjects);
         }
       } catch (err: any) {
-        console.error("CRITICAL: Error fetching properties from Firebase:", err);
+        console.error("CRITICAL: Error fetching projects from Firebase:", err);
         setFetchError(err.message || String(err));
-        setProperties(PROPERTIES);
+        setProjects(PROPERTIES);
       } finally {
         setLoading(false);
       }
     };
-    fetchProperties();
+    fetchProjects();
   }, []);
 
   const parsePrice = (priceStr: string | undefined): number => {
@@ -63,9 +64,13 @@ const Listings: React.FC = () => {
     return isNaN(value) ? 0 : value;
   };
 
-  const filteredProperties = properties.filter(p => {
+  const filteredProjects = projects.filter(p => {
+    // Data Fallback: Default to showing if isArchived is missing, only hide if explicitly true
+    if (p.isArchived === true) return false;
+
     const matchesType = typeFilter === 'All' || p.type === typeFilter;
-    const matchesArea = areaFilter === 'All' || p.location.includes(areaFilter);
+    const location = p.location || '';
+    const matchesArea = areaFilter === 'All' || location.includes(areaFilter);
     
     let matchesPrice = true;
     if (priceRangeFilter !== 'All') {
@@ -158,10 +163,10 @@ const Listings: React.FC = () => {
             Retry Connection
           </button>
         </div>
-      ) : filteredProperties.length > 0 ? (
+      ) : filteredProjects.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {filteredProperties.map(property => (
-            <PropertyCard key={property.id} property={property} />
+          {filteredProjects.map(project => (
+            <PropertyCard key={project.id} property={project} />
           ))}
         </div>
       ) : (

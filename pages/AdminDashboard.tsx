@@ -1,7 +1,18 @@
 
 import React, { useState, useEffect } from 'react';
 import { db, auth } from '../firebase';
-import firebase from 'firebase/compat/app';
+import { 
+  collection, 
+  getDocs, 
+  doc, 
+  addDoc, 
+  updateDoc, 
+  deleteDoc, 
+  query, 
+  orderBy, 
+  serverTimestamp 
+} from 'firebase/firestore';
+import { signOut } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
 import { SITE_CONFIG } from '../siteConfig';
 
@@ -40,11 +51,9 @@ const AdminDashboard = () => {
     setFetchError(null);
     try {
       if (activeTab === 'projects' || activeTab === 'archive') {
-        // Recovery logic: pulling all projects to ensure none are accidentally lost
-        const snapshot = await db.collection("properties").get();
+        const snapshot = await getDocs(collection(db, "projects"));
         const allProjects = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         
-        // Sort in memory to handle documents without createdAt
         allProjects.sort((a: any, b: any) => {
           const dateA = a.createdAt?.toDate?.() || new Date(0);
           const dateB = b.createdAt?.toDate?.() || new Date(0);
@@ -52,17 +61,17 @@ const AdminDashboard = () => {
         });
         
         if (activeTab === 'projects') {
-          // Display only non-archived items
           setProjects(allProjects.filter(p => !p.isArchived));
         } else {
-          // Display only archived items
           setProjects(allProjects.filter(p => p.isArchived));
         }
       } else if (activeTab === 'leads') {
-        const snapshot = await db.collection("leads").orderBy("timestamp", "desc").get();
+        const q = query(collection(db, "leads"), orderBy("timestamp", "desc"));
+        const snapshot = await getDocs(q);
         setLeads(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
       } else if (activeTab === 'activities') {
-        const snapshot = await db.collection("activities").orderBy("createdAt", "desc").get();
+        const q = query(collection(db, "activities"), orderBy("createdAt", "desc"));
+        const snapshot = await getDocs(q);
         setActivities(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
       }
     } catch (err: any) {
@@ -73,7 +82,7 @@ const AdminDashboard = () => {
   };
 
   const handleLogout = async () => {
-    await auth.signOut();
+    await signOut(auth);
     navigate('/');
   };
 
@@ -87,16 +96,16 @@ const AdminDashboard = () => {
         beds: projectFormData.beds ? parseInt(projectFormData.beds) : null,
         baths: projectFormData.baths ? parseInt(projectFormData.baths) : null,
         sqft: projectFormData.sqft ? parseInt(projectFormData.sqft) : 0,
-        updatedAt: firebase.firestore.Timestamp.now(),
-        isArchived: false // Ensure new/updated projects are visible
+        updatedAt: serverTimestamp(),
+        isArchived: false
       };
 
       if (editingProjectId) {
-        await db.collection("properties").doc(editingProjectId).update(data);
+        await updateDoc(doc(db, "projects", editingProjectId), data);
       } else {
-        await db.collection("properties").add({
+        await addDoc(collection(db, "projects"), {
           ...data,
-          createdAt: firebase.firestore.Timestamp.now()
+          createdAt: serverTimestamp()
         });
       }
 
@@ -120,7 +129,7 @@ const AdminDashboard = () => {
   const handleArchiveProject = async (id: string, archive: boolean = true) => {
     const msg = archive ? "Move this project to Archive?" : "Restore this project from Archive?";
     if (window.confirm(msg)) {
-      await db.collection("properties").doc(id).update({ isArchived: archive });
+      await updateDoc(doc(db, "projects", id), { isArchived: archive });
       fetchData();
     }
   };
@@ -128,7 +137,7 @@ const AdminDashboard = () => {
   // Permanent Delete: With confirmation guard
   const handlePermanentDelete = async (id: string) => {
     if (window.confirm("CRITICAL ACTION: Are you absolutely sure you want to PERMANENTLY delete this project? This cannot be undone.")) {
-      await db.collection("properties").doc(id).delete();
+      await deleteDoc(doc(db, "projects", id));
       fetchData();
     }
   };
@@ -162,15 +171,15 @@ const AdminDashboard = () => {
     try {
       const data = {
         ...activityFormData,
-        updatedAt: firebase.firestore.Timestamp.now()
+        updatedAt: serverTimestamp()
       };
 
       if (editingActivityId) {
-        await db.collection("activities").doc(editingActivityId).update(data);
+        await updateDoc(doc(db, "activities", editingActivityId), data);
       } else {
-        await db.collection("activities").add({
+        await addDoc(collection(db, "activities"), {
           ...data,
-          createdAt: firebase.firestore.Timestamp.now()
+          createdAt: serverTimestamp()
         });
       }
 
@@ -188,7 +197,7 @@ const AdminDashboard = () => {
 
   const handleDeleteActivity = async (id: string) => {
     if (window.confirm("Are you sure you want to delete this activity?")) {
-      await db.collection("activities").doc(id).delete();
+      await deleteDoc(doc(db, "activities", id));
       fetchData();
     }
   };

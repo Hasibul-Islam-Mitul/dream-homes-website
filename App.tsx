@@ -13,6 +13,7 @@ import Activities from './pages/Activities';
 import Contact from './pages/Contact';
 import ProtectedRoute from './components/ProtectedRoute';
 import { auth } from './firebase';
+import { onAuthStateChanged } from 'firebase/auth';
 import { SITE_CONFIG } from './siteConfig';
 
 const Footer = () => (
@@ -83,7 +84,7 @@ const App = () => {
 
   useEffect(() => {
     if (auth) {
-      const unsubscribe = auth.onAuthStateChanged((u: any) => {
+      const unsubscribe = onAuthStateChanged(auth, (u: any) => {
         setUser(u);
         setLoading(false);
       });

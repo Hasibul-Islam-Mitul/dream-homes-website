@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { PROPERTIES } from '../constants';
 import { db } from '../firebase';
-import firebase from 'firebase/compat/app';
+import { doc, getDoc, addDoc, collection, serverTimestamp } from 'firebase/firestore';
 
 const PropertyDetails = () => {
   const { id } = useParams<{ id: string }>();
@@ -19,13 +19,14 @@ const PropertyDetails = () => {
       setFetchError(null);
       if (db && id) {
         try {
-          const doc = await db.collection("properties").doc(id).get();
-          if (doc.exists) {
-            const data = { id: doc.id, ...doc.data() };
+          const docRef = doc(db, "projects", id);
+          const docSnap = await getDoc(docRef);
+          if (docSnap.exists()) {
+            const data = { id: docSnap.id, ...docSnap.data() };
             setProperty(data);
             setActiveImage(data.image);
           } else {
-            console.log(`Firestore: Document with ID ${id} not found in 'properties'. Checking local constants.`);
+            console.log(`Firestore: Document with ID ${id} not found in 'projects'. Checking local constants.`);
             const local = PROPERTIES.find(p => p.id === id);
             if (local) {
               setProperty(local);
@@ -59,13 +60,13 @@ const PropertyDetails = () => {
     const formData = new FormData(e.target as HTMLFormElement);
     try {
       if (db) {
-        await db.collection("leads").add({
+        await addDoc(collection(db, "leads"), {
           name: formData.get('name'),
           email: formData.get('email'),
           message: formData.get('message'),
           projectId: id,
           projectTitle: property?.title,
-          timestamp: firebase.firestore.Timestamp.now(),
+          timestamp: serverTimestamp(),
           source: 'Property Details Inquiry'
         });
       }

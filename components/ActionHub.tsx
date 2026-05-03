@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { SITE_CONFIG } from '../siteConfig';
 import { db } from '../firebase';
-import firebase from 'firebase/compat/app';
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 
 const ActionHub: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -16,9 +16,9 @@ const ActionHub: React.FC = () => {
     setSending(true);
     try {
       if (db) {
-        await db.collection("leads").add({
+        await addDoc(collection(db, "leads"), {
           ...formData,
-          timestamp: firebase.firestore.Timestamp.now(),
+          timestamp: serverTimestamp(),
           source: 'Action Hub Mail Modal'
         });
         alert("Your inquiry has been sent successfully!");

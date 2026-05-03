@@ -12,8 +12,8 @@ service cloud.firestore {
          request.auth.token.email == "hasibul.islam.mitul@gmail.com");
     }
 
-    // Properties collection
-    match /properties/{propertyId} {
+    // Projects collection
+    match /projects/{projectId} {
       allow read: if true; // Publicly readable
       allow write: if isAdmin();
     }

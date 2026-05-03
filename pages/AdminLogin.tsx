@@ -1,6 +1,7 @@
 
 import React, { useState } from 'react';
 import { auth } from '../firebase';
+import { signInWithEmailAndPassword } from 'firebase/auth';
 // Added Link to imports from react-router-dom
 import { useNavigate, Link } from 'react-router-dom';
 import { SITE_CONFIG } from '../siteConfig';
@@ -22,7 +23,7 @@ const AdminLogin = () => {
     setLoading(true);
     setError('');
     try {
-      await auth.signInWithEmailAndPassword(email, password);
+      await signInWithEmailAndPassword(auth, email, password);
       // Success redirects to the dashboard
       navigate('/admin');
     } catch (err: any) {

@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
 import { auth } from '../firebase';
+import { onAuthStateChanged } from 'firebase/auth';
 
 // Explicitly define props to include children for better type compatibility in strict environments.
 interface ProtectedRouteProps {
@@ -21,7 +22,7 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
       return;
     }
 
-    const unsubscribe = auth.onAuthStateChanged((user: any) => {
+    const unsubscribe = onAuthStateChanged(auth, (user: any) => {
       setUser(user);
       setLoading(false);
     });
