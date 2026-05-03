@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { db } from '../firebase';
 import { Activity } from '../types';
+import { collection, query, orderBy, getDocs } from 'firebase/firestore';
 
 const Activities: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'Gallery' | 'Blog'>('Gallery');
@@ -11,12 +12,17 @@ const Activities: React.FC = () => {
   useEffect(() => {
     const fetchActivities = async () => {
       setLoading(true);
-      try {
-        const snapshot = await db.collection("activities").orderBy("createdAt", "desc").get();
-        setActivities(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as Activity[]);
-      } catch (err) {
-        console.error("Error fetching activities:", err);
-      } finally {
+      if (db) {
+        try {
+          const q = query(collection(db, "activities"), orderBy("createdAt", "desc"));
+          const snapshot = await getDocs(q);
+          setActivities(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as Activity[]);
+        } catch (err) {
+          console.error("Error fetching activities:", err);
+        } finally {
+          setLoading(false);
+        }
+      } else {
         setLoading(false);
       }
     };

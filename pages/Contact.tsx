@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { db, isFirebaseConfigured } from '../firebase';
-import firebase from 'firebase/compat/app';
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { SITE_CONFIG } from '../siteConfig';
 
 const Contact = () => {
@@ -17,9 +17,9 @@ const Contact = () => {
 
     setStatus('sending');
     try {
-      await db.collection("leads").add({
+      await addDoc(collection(db, "leads"), {
         ...formData,
-        timestamp: firebase.firestore.Timestamp.now()
+        timestamp: serverTimestamp()
       });
       setStatus('success');
       setFormData({ name: '', email: '', phone: '', message: '' });
