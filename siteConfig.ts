@@ -19,7 +19,7 @@ export const SITE_CONFIG = {
     { name: "Dhaka Cantonment Area", image: "https://upload.wikimedia.org/wikipedia/commons/0/0a/Dhaka_Cantonment_%2825967499904%29.jpg" },
     { name: "Bashundhara Residential Area", image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=800" },
     { name: "Purbachal", image: "https://i.ytimg.com/vi/DO88ujjFrg4/maxresdefault.jpg" },
-    { name: "Ashulia Model Town", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSnU7V_7LTQqSWqx9AY-TF9yBboMpfI6Lhy5nK3ezcATZr6zk7c71D6W2E&s=10" },
+    { name: "Ashulia Model Town", image: "https://cdn.bdstall.com/product-image/giant_27275.jpg" },
     { name: "Trust Green City (Mirpur DOHS)", image: "https://www.tbsnews.net/sites/default/files/styles/infograph/public/images/2020/12/05/trust_green_city_0.jpg" },
     { name: "Khilkhet-Nikunja", image: "https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?q=80&w=800" },
     { name: "Mirpur-Dhanmondi", image: "https://propertyguide-store.s3.ap-southeast-1.amazonaws.com/bikroy/Mirpur_Dhaka_93181f438d.jpg" },
