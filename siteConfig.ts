@@ -2,8 +2,8 @@
 export const SITE_CONFIG = {
   name: "The Dream Homes & Constructions",
   tagline: "DREAM . BUILD . LIVE",
-  logo: "https://i.postimg.cc/VsMt2yzf/logo-(5).jpg",
-  favicon: "https://i.postimg.cc/VsMt2yzf/logo-(5).jpg",
+  logo: "https://i.postimg.cc/76Fwyrbw/FINAL.png",
+  favicon: "https://i.postimg.cc/76Fwyrbw/FINAL.png",
   phone: "+880 1769-051777",
   email: "official.mehedihasanrabbi@gmail.com",
   salesEmail: "official.mehedihasanrabbi@gmail.com",
